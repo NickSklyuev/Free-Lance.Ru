@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 //Hello Alex
+//hello Nick
 
 public class LoginActivity extends ActionBarActivity {
 
