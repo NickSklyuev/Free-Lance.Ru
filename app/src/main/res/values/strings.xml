@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">Free-Lance.Ru</string>
-
-    <string name="hello_world">Hello world! Have a nice day! Oohohohohohoh!!!!</string>
+    <string name="auth_lable">Авторизация</string>
     <string name="action_settings">Settings</string>
+    <string name="loginEditText">Логин</string>
+    <string name="passwordEditTExt">Пароль</string>
+    <string name="regButtonText">РЕГИСТРАЦИЯ</string>
 </resources>
