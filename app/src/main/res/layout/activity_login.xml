@@ -37,7 +37,10 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
-                android:hint="@string/loginEditText" />
+                android:hint="@string/loginEditText"
+                android:imeOptions="actionNext"
+                android:singleLine="true"
+                android:textColor="#333333" />
 
             <EditText
                 android:layout_width="match_parent"
@@ -49,7 +52,11 @@
                 android:layout_marginRight="20dp"
                 android:layout_marginLeft="20dp"
                 android:layout_marginTop="10dp"
-                android:hint="@string/passwordEditTExt" />
+                android:hint="@string/passwordEditTExt"
+                android:imeOptions="actionGo|actionDone"
+                android:imeActionLabel="Войти"
+                android:singleLine="true"
+                android:textColor="#333333" />
 
             <Button
                 android:layout_width="match_parent"

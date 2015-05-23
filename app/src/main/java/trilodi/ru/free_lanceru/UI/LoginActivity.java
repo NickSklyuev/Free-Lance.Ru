@@ -2,8 +2,15 @@ package trilodi.ru.free_lanceru.UI;
 
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
@@ -20,18 +27,56 @@ import trilodi.ru.free_lanceru.R;
 
 public class LoginActivity extends ActionBarActivity {
 
+    private ImageView acceptButton;
+    private EditText loginEdit, passwordEdit;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        String str = Config.getMd5Hash("ce4c81fe14ce4c81fe14");
+        Toolbar toolbar = (Toolbar) findViewById(R.id.login_toolbar);
+
+        acceptButton = (ImageView) toolbar.findViewById(R.id.OK);
+
+        acceptButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                login();
+            }
+        });
+
+        //acceptButton = (ImageView) findViewById(R.)
+
+        loginEdit = (EditText) findViewById(R.id.loginEditText);
+        passwordEdit = (EditText) findViewById(R.id.passwordEditText);
+
+        passwordEdit.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_SEARCH ||
+                        actionId == EditorInfo.IME_ACTION_DONE ||
+                        event.getAction() == KeyEvent.ACTION_DOWN &&
+                                event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
+                    login();
+                    return true;
+                }
+                return false;
+            }
+        });
+
+
+
+    }
+
+    private void login(){
+        String login = loginEdit.getText().toString();
+        String password = passwordEdit.getText().toString();
+        String hash = Config.getMd5Hash(password+""+password);
         RequestParams localRequestParams = new RequestParams();
         localRequestParams.put("method", "users_signin");
-        localRequestParams.put("username", "serviceru");
-        localRequestParams.put("password", str);
-
-
+        localRequestParams.put("username", login);
+        localRequestParams.put("password", hash);
 
         NetManager.getInstance(this).post(localRequestParams, new AsyncHttpResponseHandler() {
 
@@ -77,16 +122,15 @@ public class LoginActivity extends ActionBarActivity {
             public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
 
                 try {
-                   // progDailog.dismiss();
+                    // progDailog.dismiss();
                     String str = new String(responseBody, "UTF-8");
                     System.out.println(str);
                 } catch (Exception e) {
-                   // ERROR_TEXT.setText("Ошибка авторизации. Проверьте данные и повторите попытку");
+                    // ERROR_TEXT.setText("Ошибка авторизации. Проверьте данные и повторите попытку");
                     e.printStackTrace();
                 }
             }
         });
-
     }
 
     @Override
