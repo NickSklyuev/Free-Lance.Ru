@@ -1,6 +1,7 @@
 package trilodi.ru.free_lanceru.UI;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -52,6 +53,8 @@ public class LoginActivity extends ActionBarActivity {
         SharedPreferences localEditor = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.login_toolbar);
+
+
 
         acceptButton = (ImageView) toolbar.findViewById(R.id.OK);
 
@@ -138,10 +141,15 @@ public class LoginActivity extends ActionBarActivity {
 
                         SharedPreferences.Editor localEditor2 = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit();
                         localEditor2.putString("login",Config.myUser.username);
-                        localEditor2.putString("password",passwordEdit.getText().toString());
-                        localEditor2.putLong("login_time",(System.currentTimeMillis()/1000L));
+                        localEditor2.putString("password", passwordEdit.getText().toString());
+                        localEditor2.putLong("login_time", (System.currentTimeMillis() / 1000L));
                         localEditor2.putString("id", Config.myUser.id);
                         localEditor2.commit();
+
+                        Intent mainActivity = new Intent(LoginActivity.this, MainActivity.class);
+                        mainActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(mainActivity);
+                        finish();
                     }
                     if (response.get("error_text").toString().equals("ERROR_EMPTY_USERNAME")) {
                         errorText.setText(getResources().getString(R.string.ERROR_EMPTY_USERNAME));
