@@ -7,6 +7,8 @@ import android.view.MenuItem;
 
 import trilodi.ru.free_lanceru.R;
 
+/*hello world*/
+
 public class LoginActivity extends ActionBarActivity {
 
     @Override
