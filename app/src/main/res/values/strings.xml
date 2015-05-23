@@ -5,4 +5,14 @@
     <string name="loginEditText">Логин</string>
     <string name="passwordEditTExt">Пароль</string>
     <string name="regButtonText">РЕГИСТРАЦИЯ</string>
+
+
+    <string name="ERROR_EMPTY_USERNAME">РЕГИСТРАЦИЯ</string>
+    <string name="ERROR_INVALID_PASSWORD">РЕГИСТРАЦИЯ</string>
+    <string name="ERROR_AUTH_EXCEPTION">РЕГИСТРАЦИЯ</string>
+
+    <string name="AUTH_DIALOG_TITLE">Авторизация</string>
+    <string name="AUTH_DIALOG_TEXT">Пожалуйтса подождите....\nИдет авторизация</string>
+
+
 </resources>

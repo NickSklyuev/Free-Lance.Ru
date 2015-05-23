@@ -1,7 +1,9 @@
 package trilodi.ru.free_lanceru.UI;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
@@ -47,6 +49,8 @@ public class LoginActivity extends ActionBarActivity {
         imm = (InputMethodManager)getSystemService(
                 Context.INPUT_METHOD_SERVICE);
 
+        SharedPreferences localEditor = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.login_toolbar);
 
         acceptButton = (ImageView) toolbar.findViewById(R.id.OK);
@@ -67,10 +71,10 @@ public class LoginActivity extends ActionBarActivity {
         TextView dialogTitle = (TextView) loadingView.findViewById(R.id.dialogtitle);
         TextView dialogDescription = (TextView) loadingView.findViewById(R.id.dialogDescription);
 
-        dialogTitle.setText("Авторизация");
-        dialogDescription.setText("Пожалуйтса подождите....\nИдет авторизация");
+        dialogTitle.setText(getResources().getString(R.string.AUTH_DIALOG_TITLE));
+        dialogDescription.setText(getResources().getString(R.string.AUTH_DIALOG_TEXT));
 
-        dialog = new AlertDialog.Builder(this).setView(loadingView).create();
+        dialog = new AlertDialog.Builder(this).setView(loadingView).setCancelable(false).create();
 
 
 
@@ -78,6 +82,9 @@ public class LoginActivity extends ActionBarActivity {
 
         loginEdit = (EditText) findViewById(R.id.loginEditText);
         passwordEdit = (EditText) findViewById(R.id.passwordEditText);
+
+        loginEdit.setText(localEditor.getString("login",""));
+        passwordEdit.setText(localEditor.getString("password",""));
 
         passwordEdit.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -107,7 +114,7 @@ public class LoginActivity extends ActionBarActivity {
         imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
 
         String login = loginEdit.getText().toString();
-        String password = passwordEdit.getText().toString();
+        final String password = passwordEdit.getText().toString();
         String hash = Config.getMd5Hash(password+""+password);
         RequestParams localRequestParams = new RequestParams();
         localRequestParams.put("method", "users_signin");
@@ -122,34 +129,32 @@ public class LoginActivity extends ActionBarActivity {
 
                 try {
                     String str = new String(responseBody, "UTF-8");
-                    System.out.println(str);
+                    //System.out.println(str);
                     JSONObject response = new JSONObject(str);
                     if (Integer.parseInt(response.get("error").toString()) == 0) {
                         errorText.setVisibility(View.GONE);
                         Config.myUser = new User(response.getJSONObject("data"));
 
 
-                        System.out.println(Config.myUser);
-                        System.out.println(Config.myUser.firstname);
-
+                        SharedPreferences.Editor localEditor2 = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit();
+                        localEditor2.putString("login",Config.myUser.username);
+                        localEditor2.putString("password",passwordEdit.getText().toString());
+                        localEditor2.putLong("login_time",(System.currentTimeMillis()/1000L));
+                        localEditor2.putString("id", Config.myUser.id);
+                        localEditor2.commit();
                     }
                     if (response.get("error_text").toString().equals("ERROR_EMPTY_USERNAME")) {
-                        //new MessagesDialog(LoginActivity.this, "Авторизация", "Логин не может быть пустым.").show();
-                        //ERROR_TEXT.setText("Логин не может быть пустым");
-                        errorText.setText("Логин не может быть пустым!");
+                        errorText.setText(getResources().getString(R.string.ERROR_EMPTY_USERNAME));
                         errorText.setVisibility(View.VISIBLE);
                     }
                     if (response.get("error_text").toString().equals("ERROR_INVALID_PASSWORD")) {
-                        //new MessagesDialog(LoginActivity.this, "Авторизация", "Неправильный пароль.").show();
-                        //ERROR_TEXT.setText("Неправильный пароль");
-                        errorText.setText("Неправильный логин или пароль");
+
+                        errorText.setText(getResources().getString(R.string.ERROR_INVALID_PASSWORD));
                         errorText.setVisibility(View.VISIBLE);
                     }
 
                 } catch (Exception e) {
-                    //new MessagesDialog(LoginActivity.this, "Авторизация", "Во время авторизации было утеряно соединение с сервером.\nПроверьте соединение и повторите попытку.").show();
-                    //ERROR_TEXT.setText("Ошибка авторизации. Проверьте данные и повторите попытку");
-                    errorText.setText("Ошибка авторизации. Проверьте данные и повторите попытку");
+                    errorText.setText(getResources().getString(R.string.ERROR_AUTH_EXCEPTION));
                     errorText.setVisibility(View.VISIBLE);
                     e.printStackTrace();
                 }
@@ -171,12 +176,12 @@ public class LoginActivity extends ActionBarActivity {
             public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
 
                 try {
-                    // progDailog.dismiss();
                     String str = new String(responseBody, "UTF-8");
-                    System.out.println(str);
+                    errorText.setText(str);
+                    errorText.setVisibility(View.VISIBLE);
                 } catch (Exception e) {
                     // ERROR_TEXT.setText("Ошибка авторизации. Проверьте данные и повторите попытку");
-                    errorText.setText("Ошибка авторизации. Проверьте данные и повторите попытку");
+                    errorText.setText(getResources().getString(R.string.ERROR_AUTH_EXCEPTION));
                     errorText.setVisibility(View.VISIBLE);
                     e.printStackTrace();
                 }
