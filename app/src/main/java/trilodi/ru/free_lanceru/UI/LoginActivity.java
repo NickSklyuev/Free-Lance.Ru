@@ -6,9 +6,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import trilodi.ru.free_lanceru.R;
-
-
-/*MAIN_FUNCTIONS*/
+//dl;dsksd;lkvdvl
 public class LoginActivity extends ActionBarActivity {
 
     @Override
