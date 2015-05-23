@@ -138,9 +138,9 @@ public class NavigationDrawerFragment extends Fragment {
         }
 
         if(Config.myUser.verified==1){
-            verImage.setVisibility(View.VISIBLE);
+            verImage.setImageResource(R.drawable.verified);
         }else{
-            verImage.setVisibility(View.GONE);
+            verImage.setImageResource(R.drawable.not_verified);
         }
 
         userEmail.setText(Config.myUser.email);
