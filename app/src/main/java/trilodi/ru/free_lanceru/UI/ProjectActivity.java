@@ -11,10 +11,12 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AlertDialog;
+import android.text.Html;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.gc.materialdesign.views.ProgressBarCircularIndeterminate;
@@ -24,6 +26,8 @@ import com.squareup.picasso.Picasso;
 
 import org.apache.http.Header;
 import org.json.JSONObject;
+
+import java.text.SimpleDateFormat;
 
 import trilodi.ru.free_lanceru.Components.AvatarDrawable;
 import trilodi.ru.free_lanceru.Config;
@@ -35,7 +39,8 @@ public class ProjectActivity extends ActionBarActivity {
 
     Project project;
     ImageView avatar;
-    TextView userName, onlineStatus;
+    TextView userName, onlineStatus, titleTExt, dateText;
+    RelativeLayout only_pro, onlyver;
 
     Picasso mPicasso;
     private com.squareup.picasso.Target loadtarget;
@@ -62,6 +67,12 @@ public class ProjectActivity extends ActionBarActivity {
         avatar = (ImageView) findViewById(R.id.avatarImage);
         userName = (TextView) findViewById(R.id.userName);
         onlineStatus = (TextView) findViewById(R.id.online_status);
+
+        titleTExt = (TextView) findViewById(R.id.titleText);
+        dateText = (TextView) findViewById(R.id.dateText);
+
+        only_pro = (RelativeLayout) findViewById(R.id.onlypro);
+        onlyver = (RelativeLayout) findViewById(R.id.onlyver);
 
         mPicasso = Picasso.with(avatar.getContext());
 
@@ -123,6 +134,21 @@ public class ProjectActivity extends ActionBarActivity {
                         onlineStatus.setText("На сайте");
                     }else{
                         onlineStatus.setText("Нет на сайте");
+                    }
+
+                    SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy, HH:mm");
+                    long timestamp = (long)project.create_time * 1000;
+                    java.util.Date netDate = (new java.util.Date(timestamp));
+
+                    dateText.setText(sdf.format(netDate));
+                    titleTExt.setText(Html.fromHtml(project.title).toString());
+
+                    if(project.only_pro==1){
+                        only_pro.setVisibility(View.VISIBLE);
+                    }
+
+                    if(project.only_verified==1){
+                        onlyver.setVisibility(View.VISIBLE);
                     }
 
                 } catch (Exception e) {
