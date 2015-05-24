@@ -14,7 +14,7 @@
     <string name="AUTH_DIALOG_TITLE">Авторизация</string>
     <string name="AUTH_DIALOG_TEXT">Пожалуйтса подождите....\nИдет авторизация</string>
 
-    <string name="LOAD_PROJECT_DIALOG_TITLE">Загрущка проекта</string>
+    <string name="LOAD_PROJECT_DIALOG_TITLE">Загрузка проекта</string>
     <string name="LOAD_PROJECT_DIALOG_TEXT">Пожалуйтса подождите....\nИдет идет загрузка проекта</string>
 
 
