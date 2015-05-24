@@ -16,7 +16,6 @@ import android.widget.ImageView;
 
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
-import com.squareup.otto.Subscribe;
 
 import org.apache.http.Header;
 import org.json.JSONArray;
@@ -39,7 +38,7 @@ import trilodi.ru.free_lanceru.R;
  */
 public class ProjectsListFragment extends Fragment {
 
-    ArrayList<Project> projects = new ArrayList<Project>();
+    public static ArrayList<Project> projects = new ArrayList<Project>();
 
     private ImageView MenuButton;
 
@@ -69,20 +68,9 @@ public class ProjectsListFragment extends Fragment {
         // Required empty public constructor
     }
 
-    @Subscribe
-    public void onSetProjects(ArrayList<Project> projects){
-        try {
-            this.projects = projects;
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
     }
 
     @Override

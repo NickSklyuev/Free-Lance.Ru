@@ -21,7 +21,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-import trilodi.ru.free_lanceru.Components.BusProvider;
 import trilodi.ru.free_lanceru.Components.DBOpenHelper;
 import trilodi.ru.free_lanceru.Config;
 import trilodi.ru.free_lanceru.Models.Project;
@@ -88,6 +87,7 @@ public class SplashScreenActivity extends ActionBarActivity {
                         Intent mainActivity = new Intent(SplashScreenActivity.this, LoginActivity.class);
                         mainActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(mainActivity);
+                        overridePendingTransition(R.anim.fadein, R.anim.fadeout);
                         SplashScreenActivity.this.finish();
                     }
 
@@ -95,6 +95,7 @@ public class SplashScreenActivity extends ActionBarActivity {
                     Intent mainActivity = new Intent(SplashScreenActivity.this, LoginActivity.class);
                     mainActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(mainActivity);
+                    overridePendingTransition(R.anim.fadein, R.anim.fadeout);
                     SplashScreenActivity.this.finish();
                 }
 
@@ -111,6 +112,7 @@ public class SplashScreenActivity extends ActionBarActivity {
                 Intent mainActivity = new Intent(SplashScreenActivity.this, LoginActivity.class);
                 mainActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(mainActivity);
+                overridePendingTransition(R.anim.fadein, R.anim.fadeout);
                 SplashScreenActivity.this.finish();
             }
         });
@@ -145,11 +147,12 @@ public class SplashScreenActivity extends ActionBarActivity {
                         e.printStackTrace();
                     }
 
-                    BusProvider.getInstance().post(projects);
+                    ProjectsListFragment.projects = projects;
 
                     Intent mainActivity = new Intent(SplashScreenActivity.this, MainActivity.class);
                     mainActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(mainActivity);
+                    overridePendingTransition(R.anim.fadein, R.anim.fadeout);
                     SplashScreenActivity.this.finish();
 
 
@@ -258,6 +261,7 @@ public class SplashScreenActivity extends ActionBarActivity {
             Intent mainActivity = new Intent(SplashScreenActivity.this, LoginActivity.class);
             mainActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(mainActivity);
+            overridePendingTransition(R.anim.fadein, R.anim.fadeout);
             SplashScreenActivity.this.finish();
         }
 
