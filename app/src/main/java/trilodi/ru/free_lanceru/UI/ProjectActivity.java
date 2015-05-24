@@ -76,6 +76,14 @@ public class ProjectActivity extends ActionBarActivity {
 
         mPicasso = Picasso.with(avatar.getContext());
 
+        ImageView backButton = (ImageView) findViewById(R.id.backButton);
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ProjectActivity.this.finish();
+            }
+        });
+
         if (loadtarget == null) {
             loadtarget = new com.squareup.picasso.Target()  {
                 @Override
