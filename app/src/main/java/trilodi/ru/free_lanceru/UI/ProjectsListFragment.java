@@ -16,6 +16,7 @@ import android.widget.ImageView;
 
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
+import com.squareup.otto.Subscribe;
 
 import org.apache.http.Header;
 import org.json.JSONArray;
@@ -37,6 +38,8 @@ import trilodi.ru.free_lanceru.R;
  * create an instance of this fragment.
  */
 public class ProjectsListFragment extends Fragment {
+
+    ArrayList<Project> projects = new ArrayList<Project>();
 
     private ImageView MenuButton;
 
@@ -64,6 +67,15 @@ public class ProjectsListFragment extends Fragment {
 
     public ProjectsListFragment() {
         // Required empty public constructor
+    }
+
+    @Subscribe
+    public void onSetProjects(ArrayList<Project> projects){
+        try {
+            this.projects = projects;
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -108,7 +120,24 @@ public class ProjectsListFragment extends Fragment {
 
         refreshLayout.showContextMenu();
 
-        loadData();
+        if(projects.size()<=0){
+            loadData();
+        }else{
+            mAdapter = new ProjectsListAdapter(projects);
+            projectsRecyclerView.setItemAnimator(new DefaultItemAnimator());
+            projectsRecyclerView.setAdapter(mAdapter);
+            refreshLayout.setRefreshing(false);
+
+            mAdapter.SetOnItemClickListener(new ProjectsListAdapter.OnItemClickListener() {
+                @Override
+                public void onItemClick(View view, int position) {
+                            /*Intent intt = new Intent(getActivity(), ChatActivity.class);
+                            intt.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(intt);*/
+                }
+            });
+        }
+
 
         return v;
     }
@@ -116,7 +145,7 @@ public class ProjectsListFragment extends Fragment {
 
     private void loadData()
     {
-
+        projects.clear();
         refreshLayout.setRefreshing(true);
 
         RequestParams localRequestParams = new RequestParams();
@@ -133,7 +162,7 @@ public class ProjectsListFragment extends Fragment {
                     JSONObject localJSONObject = new JSONObject(str);
                     JSONArray ProjectsList = localJSONObject.getJSONObject("data").getJSONArray("projects_list");
 
-                    ArrayList<Project> projects = new ArrayList<Project>();
+
 
                     try{
                         for (int i=0; i<ProjectsList.length(); i++){
