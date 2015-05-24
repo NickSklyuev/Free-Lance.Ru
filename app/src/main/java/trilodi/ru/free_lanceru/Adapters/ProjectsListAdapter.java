@@ -72,10 +72,14 @@ public class ProjectsListAdapter extends RecyclerView.Adapter<ProjectsListAdapte
 
         if(project.only_pro==0){
             holder.only_pro.setVisibility(View.GONE);
+        }else{
+            holder.only_pro.setVisibility(View.VISIBLE);
         }
 
         if(project.only_verified==0){
             holder.only_verified.setVisibility(View.GONE);
+        }else{
+            holder.only_verified.setVisibility(View.VISIBLE);
         }
 
     }
