@@ -1,5 +1,6 @@
 package trilodi.ru.free_lanceru.UI;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.BitmapShader;
@@ -8,14 +9,15 @@ import android.graphics.Paint;
 import android.graphics.RectF;
 import android.graphics.Shader;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AlertDialog;
 import android.text.Html;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -29,9 +31,11 @@ import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 
+import trilodi.ru.free_lanceru.Adapters.FilesAdapter;
 import trilodi.ru.free_lanceru.Components.AvatarDrawable;
 import trilodi.ru.free_lanceru.Config;
 import trilodi.ru.free_lanceru.Models.Project;
+import trilodi.ru.free_lanceru.Models.Responses;
 import trilodi.ru.free_lanceru.Network.NetManager;
 import trilodi.ru.free_lanceru.R;
 
@@ -39,14 +43,18 @@ public class ProjectActivity extends ActionBarActivity {
 
     Project project;
     ImageView avatar;
-    TextView userName, onlineStatus, titleTExt, dateText;
+    TextView userName, onlineStatus, titleTExt, dateText, descrText, budgetText, responsesText;
     RelativeLayout only_pro, onlyver;
+    ListView attachesList;
 
     Picasso mPicasso;
     private com.squareup.picasso.Target loadtarget;
 
     AlertDialog dialog;
     View loadingView;
+
+    String[] currency={"USD","EURO","р."};
+    String[] dimension={"","/Час","/День","/Месяц","/Проект"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +75,11 @@ public class ProjectActivity extends ActionBarActivity {
         avatar = (ImageView) findViewById(R.id.avatarImage);
         userName = (TextView) findViewById(R.id.userName);
         onlineStatus = (TextView) findViewById(R.id.online_status);
+        descrText = (TextView) findViewById(R.id.descrText);
+        budgetText = (TextView) findViewById(R.id.budgetText);
+        responsesText = (TextView) findViewById(R.id.responsesText);
+
+        attachesList = (ListView) findViewById(R.id.attachesList);
 
         titleTExt = (TextView) findViewById(R.id.titleText);
         dateText = (TextView) findViewById(R.id.dateText);
@@ -150,6 +163,7 @@ public class ProjectActivity extends ActionBarActivity {
 
                     dateText.setText(sdf.format(netDate));
                     titleTExt.setText(Html.fromHtml(project.title).toString());
+                    descrText.setText(Html.fromHtml(project.descr).toString());
 
                     if(project.only_pro==1){
                         only_pro.setVisibility(View.VISIBLE);
@@ -158,6 +172,43 @@ public class ProjectActivity extends ActionBarActivity {
                     if(project.only_verified==1){
                         onlyver.setVisibility(View.VISIBLE);
                     }
+
+                    String price="По договоренности";
+
+                    if(!project.currency.equals("0")){
+                        price=project.budget+" "+currency[Integer.parseInt(project.currency)]+dimension[Integer.parseInt(project.dimension)];
+                    }
+
+                    budgetText.setText("Бюджет: "+price);
+
+                    boolean select = false;
+
+                    for(int i=0;i<project.responses.size();i++){
+                        Responses resp = project.responses.get(i);
+                        if(resp.select>0){
+                            select = true;
+                            break;
+                        }
+                    }
+                    responsesText.setText("ответов "+project.responses.size());
+                    if(select){
+                        responsesText.setText("исполнитель определен");
+                    }
+
+                    if(project.attaches.size()>0) {
+                        FilesAdapter adapter = new FilesAdapter(attachesList.getContext(), project.attaches);
+                        attachesList.setAdapter(adapter);
+                        attachesList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                            @Override
+                            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                final Intent intent = new Intent(Intent.ACTION_VIEW).setData(Uri.parse(project.attaches.get(position)));
+                                startActivity(intent);
+                            }
+                        });
+                    }else{
+                        attachesList.setVisibility(View.GONE);
+                    }
+
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -172,32 +223,11 @@ public class ProjectActivity extends ActionBarActivity {
 
             @Override
             public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                finish();
                // new MessagesDialog(ProjectActivity.this, "Проект", "Во время загрузки проекта произошла ошибка соединения.\nПроверьте соединение и повторите попытку.").show();
             }
         });
 
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_project, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 
     public Bitmap roundImage(Bitmap bm){

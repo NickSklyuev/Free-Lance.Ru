@@ -29,6 +29,10 @@ public class Project {
     public String currency;
     public int status;
     public ArrayList<String> attaches = new ArrayList<String>();
+    public ArrayList<Responses> responses = new ArrayList<Responses>();
+    public String responses_count;
+    public int is_responses_exists;
+
 
     public Project(JSONObject projectJson){
         try{
@@ -53,11 +57,34 @@ public class Project {
             this.status = projectJson.getInt("status");
 
             try{
+                this.responses_count = projectJson.getString("responses_count");
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+            try{
+                this.is_responses_exists = projectJson.getInt("is_responses_exists");
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+
+            try{
                 JSONArray attaches = projectJson.getJSONArray("attaches");
 
                 for(int i=0;i<attaches.length();i++){
                     JSONObject attach = attaches.getJSONObject(i);
                     this.attaches.add(attach.getString("url")+attach.getString("file"));
+                }
+
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+
+            try{
+                JSONArray responses = projectJson.getJSONArray("responses");
+
+                for(int i=0;i<responses.length();i++){
+                    JSONObject response = responses.getJSONObject(i);
+                    this.responses.add(new Responses(response));
                 }
 
             }catch (Exception e){
