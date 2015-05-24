@@ -1,5 +1,6 @@
 package trilodi.ru.free_lanceru.Adapters;
 
+import android.content.Intent;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
@@ -12,8 +13,10 @@ import android.widget.TextView;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
+import trilodi.ru.free_lanceru.Config;
 import trilodi.ru.free_lanceru.Models.Project;
 import trilodi.ru.free_lanceru.R;
+import trilodi.ru.free_lanceru.UI.ProjectActivity;
 
 /**
  * Created by REstoreService on 24.05.15.
@@ -92,6 +95,17 @@ public class ProjectsListAdapter extends RecyclerView.Adapter<ProjectsListAdapte
 
             projectCard = (CardView) v.findViewById(R.id.card_view);
 
+            v.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    System.out.println(projects.get(getPosition()).title);
+                    Config.project_id = projects.get(getPosition()).id;
+                    Intent intt = new Intent(projectCard.getContext(), ProjectActivity.class);
+                    intt.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    projectCard.getContext().startActivity(intt);
+                }
+            });
+
             title = (TextView) projectCard.findViewById(R.id.titleText);
             descr = (TextView) projectCard.findViewById(R.id.descrText);
             price = (TextView) projectCard.findViewById(R.id.priceText);
@@ -104,6 +118,7 @@ public class ProjectsListAdapter extends RecyclerView.Adapter<ProjectsListAdapte
 
         @Override
         public void onClick(View v) {
+            System.out.println("Taped");
             if (mItemClickListener != null) {
                 mItemClickListener.onItemClick(v, getPosition());
             }

@@ -1,6 +1,9 @@
 package trilodi.ru.free_lanceru.Models;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 /**
  * Created by REstoreService on 24.05.15.
@@ -25,6 +28,7 @@ public class Project {
     public int budget_agreement;
     public String currency;
     public int status;
+    public ArrayList<String> attaches = new ArrayList<String>();
 
     public Project(JSONObject projectJson){
         try{
@@ -47,6 +51,19 @@ public class Project {
             this.budget_agreement = projectJson.getInt("budget_agreement");
             this.currency = projectJson.getString("currency");
             this.status = projectJson.getInt("status");
+
+            try{
+                JSONArray attaches = projectJson.getJSONArray("attaches");
+
+                for(int i=0;i<attaches.length();i++){
+                    JSONObject attach = attaches.getJSONObject(i);
+                    this.attaches.add(attach.getString("url")+attach.getString("file"));
+                }
+
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+
         }catch(Exception e){
             e.printStackTrace();
         }

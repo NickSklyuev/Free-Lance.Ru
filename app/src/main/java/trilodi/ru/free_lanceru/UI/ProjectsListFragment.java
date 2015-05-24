@@ -8,10 +8,14 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.DecelerateInterpolator;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import com.loopj.android.http.AsyncHttpResponseHandler;
@@ -49,6 +53,7 @@ public class ProjectsListFragment extends Fragment {
     private SwipeRefreshLayout refreshLayout;
 
     private OnFragmentInteractionListener mListener;
+    android.support.v7.widget.Toolbar tb;
 
     /**
      * Use this factory method to create a new instance of
@@ -73,6 +78,26 @@ public class ProjectsListFragment extends Fragment {
         super.onCreate(savedInstanceState);
     }
 
+    private void hideViews() {
+        tb.animate().translationY(-tb.getHeight()).setInterpolator(new AccelerateInterpolator(2));
+
+        FrameLayout.LayoutParams ps = (FrameLayout.LayoutParams) refreshLayout.getLayoutParams();
+        ps.topMargin = 0;
+        refreshLayout.setLayoutParams(ps);
+        refreshLayout.requestLayout();
+    }
+
+    private void showViews() {
+        tb.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2));
+
+        DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
+        int px = Math.round(57 * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
+        FrameLayout.LayoutParams ps = (FrameLayout.LayoutParams) refreshLayout.getLayoutParams();
+        ps.topMargin = px;
+        refreshLayout.setLayoutParams(ps);
+        refreshLayout.requestLayout();
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -86,12 +111,26 @@ public class ProjectsListFragment extends Fragment {
             }
         });
 
+        tb = (android.support.v7.widget.Toolbar) v.findViewById(R.id.login_toolbar);
+
         projectsRecyclerView = (RecyclerView) v.findViewById(R.id.projectList);
         projectsRecyclerView.setHasFixedSize(true);
-        mLayoutManager = new LinearLayoutManager(projectsRecyclerView.getContext());
+        mLayoutManager = new LinearLayoutManager(getActivity());
         projectsRecyclerView.setLayoutManager(mLayoutManager);
-
         refreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipe_layout);
+        /*
+        projectsRecyclerView.setOnScrollListener(new HidingScrollListener(getActivity()){
+            @Override
+            public void onHide() {
+                hideViews();
+            }
+            @Override
+            public void onShow() {
+                showViews();
+            }
+        });
+        */
+
 
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -115,15 +154,6 @@ public class ProjectsListFragment extends Fragment {
             projectsRecyclerView.setItemAnimator(new DefaultItemAnimator());
             projectsRecyclerView.setAdapter(mAdapter);
             refreshLayout.setRefreshing(false);
-
-            mAdapter.SetOnItemClickListener(new ProjectsListAdapter.OnItemClickListener() {
-                @Override
-                public void onItemClick(View view, int position) {
-                            /*Intent intt = new Intent(getActivity(), ChatActivity.class);
-                            intt.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            startActivity(intt);*/
-                }
-            });
         }
 
 
@@ -165,15 +195,6 @@ public class ProjectsListFragment extends Fragment {
                     projectsRecyclerView.setItemAnimator(new DefaultItemAnimator());
                     projectsRecyclerView.setAdapter(mAdapter);
                     refreshLayout.setRefreshing(false);
-
-                    mAdapter.SetOnItemClickListener(new ProjectsListAdapter.OnItemClickListener() {
-                        @Override
-                        public void onItemClick(View view, int position) {
-                            /*Intent intt = new Intent(getActivity(), ChatActivity.class);
-                            intt.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            startActivity(intt);*/
-                        }
-                    });
 
                 }catch(Exception e){
                     e.printStackTrace();

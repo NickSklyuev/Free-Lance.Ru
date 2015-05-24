@@ -66,7 +66,7 @@ public class AvatarDrawable extends Drawable {
         isProfile = profile;
         if (user != null) {
             this.user = user;
-            setInfo(user.id, user.firstname, user.lastname, false);
+            setInfo(user.id, user.firstname, user.lastname, user.username, false);
         }
     }
 
@@ -128,7 +128,7 @@ public class AvatarDrawable extends Drawable {
 
     public void setInfo(User user) {
         if (user != null) {
-            setInfo(user.id, user.firstname, user.lastname, false);
+            setInfo(user.id, user.firstname, user.lastname, user.username, false);
         }
     }
 
@@ -136,7 +136,7 @@ public class AvatarDrawable extends Drawable {
         color = value;
     }
 
-    public void setInfo(String id, String firstName, String lastName, boolean isBroadcast) {
+    public void setInfo(String id, String firstName, String lastName, String userName, boolean isBroadcast) {
         if (isProfile) {
             color = arrColorsProfiles[getColorIndex(Integer.parseInt(id))];
         } else {
@@ -145,12 +145,17 @@ public class AvatarDrawable extends Drawable {
 
         drawBrodcast = isBroadcast;
 
+        if (lastName == null || lastName.length() == 0) {
+            lastName = userName;
+        }
+
         if (firstName == null || firstName.length() == 0) {
             firstName = lastName;
             lastName = null;
         }
 
         String text = "";
+
         if (firstName != null && firstName.length() > 0) {
             text += firstName.substring(0, 1);
         }

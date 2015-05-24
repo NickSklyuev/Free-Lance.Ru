@@ -132,6 +132,7 @@ public class SplashScreenActivity extends ActionBarActivity {
             public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                 try{
                     String str = new String(responseBody, "UTF-8");
+                    System.out.println(str);
 
                     JSONObject localJSONObject = new JSONObject(str);
                     JSONArray ProjectsList = localJSONObject.getJSONObject("data").getJSONArray("projects_list");
