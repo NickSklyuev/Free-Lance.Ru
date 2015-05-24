@@ -52,7 +52,11 @@ public class User {
             this.lastname = userData.getString("lastname");
             this.birthday = userData.getString("birthday");
             this.username = userData.getString("username");
-            this.email = userData.getString("email");
+            try{
+                this.email = userData.getString("email");
+            }catch (Exception e){
+
+            }
             this.create_time = userData.getInt("create_time");
             this.update_time = userData.getInt("update_time");
 

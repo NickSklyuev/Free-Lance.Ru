@@ -96,6 +96,7 @@ public class LoginActivity extends ActionBarActivity {
                         actionId == EditorInfo.IME_ACTION_DONE ||
                         event.getAction() == KeyEvent.ACTION_DOWN &&
                                 event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
+
                     login();
                     return true;
                 }
@@ -114,7 +115,12 @@ public class LoginActivity extends ActionBarActivity {
             e.printStackTrace();
         }
 
-        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+        try{
+            imm.hideSoftInputFromWindow(loginEdit.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+            imm.hideSoftInputFromWindow(passwordEdit.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
 
         String login = loginEdit.getText().toString();
         final String password = passwordEdit.getText().toString();

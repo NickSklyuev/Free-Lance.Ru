@@ -4,12 +4,28 @@ import android.app.Activity;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
+
+import org.apache.http.Header;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+
+import trilodi.ru.free_lanceru.Adapters.ProjectsListAdapter;
+import trilodi.ru.free_lanceru.Models.Project;
+import trilodi.ru.free_lanceru.Network.NetManager;
 import trilodi.ru.free_lanceru.R;
 
 /**
@@ -23,6 +39,12 @@ import trilodi.ru.free_lanceru.R;
 public class ProjectsListFragment extends Fragment {
 
     private ImageView MenuButton;
+
+    private RecyclerView projectsRecyclerView;
+    private ProjectsListAdapter mAdapter;
+    private RecyclerView.LayoutManager mLayoutManager;
+
+    private SwipeRefreshLayout refreshLayout;
 
     private OnFragmentInteractionListener mListener;
 
@@ -63,7 +85,100 @@ public class ProjectsListFragment extends Fragment {
                 MainActivity.drawerLayout.openDrawer(Gravity.LEFT);
             }
         });
+
+        projectsRecyclerView = (RecyclerView) v.findViewById(R.id.projectList);
+        projectsRecyclerView.setHasFixedSize(true);
+        mLayoutManager = new LinearLayoutManager(projectsRecyclerView.getContext());
+        projectsRecyclerView.setLayoutManager(mLayoutManager);
+
+        refreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipe_layout);
+
+        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                loadData();
+            }
+        });
+
+        refreshLayout.setColorSchemeResources(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
+
+
+        refreshLayout.showContextMenu();
+
+        loadData();
+
         return v;
+    }
+
+
+    private void loadData()
+    {
+
+        refreshLayout.setRefreshing(true);
+
+        RequestParams localRequestParams = new RequestParams();
+        localRequestParams.put("method", "projects_list");
+        localRequestParams.put("page", 1);
+        NetManager.getInstance(getActivity()).post(localRequestParams, new AsyncHttpResponseHandler()
+        {
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                try{
+                    String str = new String(responseBody, "UTF-8");
+
+                    JSONObject localJSONObject = new JSONObject(str);
+                    JSONArray ProjectsList = localJSONObject.getJSONObject("data").getJSONArray("projects_list");
+
+                    ArrayList<Project> projects = new ArrayList<Project>();
+
+                    try{
+                        for (int i=0; i<ProjectsList.length(); i++){
+                            //this.Project(projectsArray.getJSONObject(i));
+                            projects.add(new Project(ProjectsList.getJSONObject(i)));
+                        }
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+
+                    mAdapter = new ProjectsListAdapter(projects);
+                    projectsRecyclerView.setItemAnimator(new DefaultItemAnimator());
+                    projectsRecyclerView.setAdapter(mAdapter);
+                    refreshLayout.setRefreshing(false);
+
+                    mAdapter.SetOnItemClickListener(new ProjectsListAdapter.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(View view, int position) {
+                            /*Intent intt = new Intent(getActivity(), ChatActivity.class);
+                            intt.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(intt);*/
+                        }
+                    });
+
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFinish(){
+                try {
+                    //progDailog.dismiss();
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+                super.onFinish();
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                //new MessagesDialog(getActivity(),"Проекты", "Во время загрузки списка проектов произошла ошибка соединения.\nПроверьте соединение и повторите попытку.").show();
+            }
+        });
+        //setRefreshActionButtonState(true);
     }
 
     // TODO: Rename method, update argument and hook method into UI event

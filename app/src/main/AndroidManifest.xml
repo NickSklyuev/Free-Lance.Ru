@@ -27,10 +27,6 @@
             android:name=".UI.MainActivity"
             android:label="@string/title_activity_main" >
         </activity>
-        <activity
-            android:name=".UI.ProjectsListActivity"
-            android:label="@string/title_activity_projects_list" >
-        </activity>
     </application>
 
 </manifest>
