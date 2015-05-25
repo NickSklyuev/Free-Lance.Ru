@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.os.Environment;
 import android.util.Log;
 
 import java.io.File;
@@ -17,14 +18,22 @@ import java.io.OutputStream;
  */
 public class DBOpenHelper extends SQLiteOpenHelper
 {
-    private static String DB_NAME = "freelance7.sqlite";
+    private static String DB_NAME = "freelance.sqlite";
+    File sdcard = Environment.getExternalStorageDirectory() ;
     private static String DB_PATH = "/data/data/trilodi.ru.free_lance/databases/";
     private final Context mContext;
     private SQLiteDatabase mDB;
+    File folder;
 
     public DBOpenHelper(Context paramContext)
     {
         super(paramContext, DB_NAME, null, 1);
+
+        folder = new File(sdcard.getAbsoluteFile(), ".freelance_files");
+        if(!folder.exists()){
+            folder.mkdir();
+        }
+
         this.mContext = paramContext;
         boolean dbexist = checkdatabase();
         try{
@@ -42,10 +51,11 @@ public class DBOpenHelper extends SQLiteOpenHelper
 
     private boolean checkDataBase()
     {
+        System.out.println(folder.getAbsoluteFile() +"/" + DB_NAME);
         try
         {
             SQLiteDatabase localSQLiteDatabase1 = null;
-            SQLiteDatabase localSQLiteDatabase2 = SQLiteDatabase.openDatabase(DB_PATH + DB_NAME, null, 16);
+            SQLiteDatabase localSQLiteDatabase2 = SQLiteDatabase.openDatabase(folder.getAbsoluteFile() +"/" + DB_NAME, null, 16);
             localSQLiteDatabase1 = localSQLiteDatabase2;
             if (localSQLiteDatabase1 != null)
                 localSQLiteDatabase1.close();
@@ -76,7 +86,7 @@ public class DBOpenHelper extends SQLiteOpenHelper
         //SQLiteDatabase checkdb = null;
         boolean checkdb = false;
         try {
-            String myPath = DB_PATH + DB_NAME;
+            String myPath = folder.getAbsoluteFile() +"/" + DB_NAME;
             File dbfile = new File(myPath);
             //checkdb = SQLiteDatabase.openDatabase(myPath,null,SQLiteDatabase.OPEN_READWRITE);
             checkdb = dbfile.exists();
@@ -88,10 +98,10 @@ public class DBOpenHelper extends SQLiteOpenHelper
 
     private void copydatabase() throws IOException {
         //Open your local db as the input stream
-        InputStream myinput = mContext.getAssets().open(DB_NAME);
+        InputStream myinput = mContext.getAssets().open("freelance.sqlite");
 
         // Path to the just created empty db
-        String outfilename = DB_PATH + DB_NAME;
+        String outfilename = folder.getAbsoluteFile() +"/" + DB_NAME;
 
         //Open the empty db as the output stream
         OutputStream myoutput = new FileOutputStream(outfilename);
@@ -111,7 +121,7 @@ public class DBOpenHelper extends SQLiteOpenHelper
 
     public void opendatabase() {
         //Open the database
-        String mypath = DB_PATH + DB_NAME;
+        String mypath = folder.getAbsoluteFile() +"/" + DB_NAME;
         mDB = SQLiteDatabase.openDatabase(mypath, null, SQLiteDatabase.OPEN_READWRITE);
     }
 

@@ -46,6 +46,7 @@ public class ProjectActivity extends ActionBarActivity {
     TextView userName, onlineStatus, titleTExt, dateText, descrText, budgetText, responsesText;
     RelativeLayout only_pro, onlyver;
     ListView attachesList;
+    com.gc.materialdesign.views.ButtonFloat writeResponse;
 
     Picasso mPicasso;
     private com.squareup.picasso.Target loadtarget;
@@ -80,6 +81,8 @@ public class ProjectActivity extends ActionBarActivity {
         responsesText = (TextView) findViewById(R.id.responsesText);
 
         attachesList = (ListView) findViewById(R.id.attachesList);
+
+        writeResponse = (com.gc.materialdesign.views.ButtonFloat) findViewById(R.id.buttonflat);
 
         titleTExt = (TextView) findViewById(R.id.titleText);
         dateText = (TextView) findViewById(R.id.dateText);
@@ -131,6 +134,18 @@ public class ProjectActivity extends ActionBarActivity {
 
                     project = new Project(localJSONObject2);
 
+                    String price="По договоренности";
+                    budgetText.setText("Бюджет: "+price);
+                    try {
+                        if (!project.currency.equals("0")) {
+                            price = project.budget + " " + currency[Integer.parseInt(project.currency)] + dimension[Integer.parseInt(project.dimension)];
+                        }
+
+                        budgetText.setText("Бюджет: " + price);
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+
                     AvatarDrawable avatarDrawable = null;
                     avatarDrawable = new AvatarDrawable(project.user);
                     avatar.setImageDrawable(avatarDrawable);
@@ -173,13 +188,7 @@ public class ProjectActivity extends ActionBarActivity {
                         onlyver.setVisibility(View.VISIBLE);
                     }
 
-                    String price="По договоренности";
 
-                    if(!project.currency.equals("0")){
-                        price=project.budget+" "+currency[Integer.parseInt(project.currency)]+dimension[Integer.parseInt(project.dimension)];
-                    }
-
-                    budgetText.setText("Бюджет: "+price);
 
                     boolean select = false;
 
@@ -213,6 +222,8 @@ public class ProjectActivity extends ActionBarActivity {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+
+
             }
 
             @Override

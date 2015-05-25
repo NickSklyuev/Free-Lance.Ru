@@ -19,6 +19,9 @@ import org.apache.http.Header;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 import trilodi.ru.free_lanceru.Components.DBOpenHelper;
@@ -116,6 +119,7 @@ public class SplashScreenActivity extends ActionBarActivity {
                 SplashScreenActivity.this.finish();
             }
         });
+
     }
 
     private void loadProjects()
@@ -186,7 +190,7 @@ public class SplashScreenActivity extends ActionBarActivity {
 
         progressText.setText("Загрузка настроек приложения...");
 
-        NetManager.getInstance(this).post(localRequestParams, new AsyncHttpResponseHandler() {
+        /*NetManager.getInstance(this).post(localRequestParams, new AsyncHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                 //progDailog.dismiss();
@@ -227,6 +231,29 @@ public class SplashScreenActivity extends ActionBarActivity {
                 //new MessagesDialog(MainActivity.this, "Настройки системы", "Во время загрузки настроек было утеряно соединение с интернетом\nПроверьте соединение").show();
             }
         });
+        */
+
+        try{
+            String str="";
+            StringBuffer buf = new StringBuffer();
+            InputStream is = getAssets().open("settings_data.txt");
+            BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+            if (is!=null) {
+                while ((str = reader.readLine()) != null) {
+                    buf.append(str + "\n" );
+                }
+            }
+            is.close();
+            SharedPreferences.Editor localEditor2 = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit();
+            localEditor2.putBoolean("first_launch",false);
+            localEditor2.commit();
+
+            progressText.setText("Сохранение настроек....");
+
+            new updateSettings().execute(buf.toString());
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -271,7 +298,7 @@ public class SplashScreenActivity extends ActionBarActivity {
             try {
                 JSONObject settings=new JSONObject(paramArrayOfString[0]);
 
-                JSONArray citiesArray=settings.getJSONObject("data").getJSONObject("settings").getJSONArray("cities");
+                JSONArray citiesArray=settings.getJSONArray("cities");
                 for(int i=0;i<citiesArray.length();i++){
                     JSONObject city=citiesArray.getJSONObject(i);
                     Cursor cc =Config.db.query("city", null, "id="+city.get("id").toString(), null, null, null, null);
@@ -289,7 +316,7 @@ public class SplashScreenActivity extends ActionBarActivity {
                     cc.close();
                 }
 
-                JSONArray coutriesArray=settings.getJSONObject("data").getJSONObject("settings").getJSONArray("countries");
+                JSONArray coutriesArray=settings.getJSONArray("countries");
                 for(int i=0;i<coutriesArray.length();i++){
                     JSONObject country=coutriesArray.getJSONObject(i);
                     Cursor cc =Config.db.query("country", null, "id="+country.get("id").toString(), null, null, null, null);
@@ -306,7 +333,7 @@ public class SplashScreenActivity extends ActionBarActivity {
                     cc.close();
                 }
 
-                JSONObject filterObj=settings.getJSONObject("data").getJSONObject("settings").getJSONObject("filter");
+                JSONObject filterObj=settings.getJSONObject("filter");
                 ContentValues cv = new ContentValues();
                 cv.put("enabled", filterObj.get("enabled").toString());
                 cv.put("keyword", filterObj.get("keyword").toString());
@@ -326,7 +353,7 @@ public class SplashScreenActivity extends ActionBarActivity {
                     e.printStackTrace();
                 }
 
-                JSONArray categoriesArray=settings.getJSONObject("data").getJSONObject("settings").getJSONArray("categories");
+                JSONArray categoriesArray=settings.getJSONArray("categories");
                 for(int i=0;i<categoriesArray.length();i++){
                     JSONObject categories=categoriesArray.getJSONObject(i);
                     Cursor cc =Config.db.query("category", null, "id="+categories.get("id").toString(), null, null, null, null);
@@ -344,7 +371,7 @@ public class SplashScreenActivity extends ActionBarActivity {
                     cc.close();
                 }
 
-                JSONArray categoryGroupArray=settings.getJSONObject("data").getJSONObject("settings").getJSONArray("categories_group");
+                JSONArray categoryGroupArray=settings.getJSONArray("categories_group");
                 for(int i=0;i<categoryGroupArray.length();i++){
                     JSONObject categoryGroup=categoryGroupArray.getJSONObject(i);
                     Cursor cc =Config.db.query("category_group", null, "id="+categoryGroup.get("id").toString(), null, null, null, null);
@@ -361,7 +388,7 @@ public class SplashScreenActivity extends ActionBarActivity {
                     cc.close();
                 }
 
-                JSONObject pushObj=settings.getJSONObject("data").getJSONObject("settings").getJSONObject("push");
+                JSONObject pushObj=settings.getJSONObject("push");
 
                 try{
                     SharedPreferences.Editor pushPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit();
