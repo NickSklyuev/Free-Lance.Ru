@@ -216,7 +216,6 @@ public class ProjectActivity extends ActionBarActivity {
                         attachesList.setVisibility(View.GONE);
                     }
 
-
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
