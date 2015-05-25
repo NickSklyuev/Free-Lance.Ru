@@ -172,6 +172,8 @@ public class ProjectsListFragment extends Fragment {
     {
         projects.clear();
         refreshLayout.setRefreshing(true);
+        loadProgressing.refreshDrawableState();
+        loadProgressing.requestLayout();
         loadProgressing.setVisibility(View.VISIBLE);
 
         RequestParams localRequestParams = new RequestParams();
