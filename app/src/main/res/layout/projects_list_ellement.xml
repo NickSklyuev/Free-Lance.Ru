@@ -73,7 +73,7 @@
                 android:padding="10dp">
 
                 <RelativeLayout
-                    android:layout_width="120dp"
+                    android:layout_width="wrap_content"
                     android:id="@+id/onlypro"
                     android:background="@drawable/only_style"
                     android:layout_height="wrap_content"
@@ -82,28 +82,28 @@
 
                     <TextView
                         android:layout_width="wrap_content"
-                        android:layout_height="18dp"
+                        android:layout_height="14dp"
                         android:text="Только для"
-                        android:id="@+id/textView4"
+                        android:id="@+id/textView3"
                         android:gravity="center_vertical|top"
-                        android:textSize="14dp"
+                        android:textSize="12dp"
                         android:typeface="normal"
                         android:textStyle="normal"
                         android:textColor="#ff787878" />
 
                     <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="15dp"
-                        android:id="@+id/imageView2"
+                        android:layout_width="25dp"
+                        android:layout_height="12dp"
+                        android:id="@+id/imageView3"
                         android:src="@drawable/pro_list"
                         android:layout_alignParentTop="false"
-                        android:layout_toRightOf="@+id/textView4"
-                        android:layout_marginTop="2dp" />
-
+                        android:layout_toRightOf="@+id/textView3"
+                        android:layout_marginTop="2dp"
+                        android:layout_marginLeft="5dp" />
                 </RelativeLayout>
 
                 <RelativeLayout
-                    android:layout_width="120dp"
+                    android:layout_width="93dp"
                     android:id="@+id/onlyverified"
                     android:background="@drawable/only_style"
                     android:layout_height="wrap_content"
@@ -112,25 +112,25 @@
 
                     <TextView
                         android:layout_width="wrap_content"
-                        android:layout_height="18dp"
+                        android:layout_height="14dp"
                         android:text="Только для"
-                        android:id="@+id/textVerified"
+                        android:id="@+id/textView5"
                         android:gravity="center_vertical|top"
-                        android:textSize="14dp"
+                        android:textSize="12dp"
                         android:typeface="normal"
                         android:textStyle="normal"
                         android:textColor="#ff787878" />
 
                     <ImageView
-                        android:layout_width="15dp"
-                        android:layout_height="15dp"
-                        android:id="@+id/imageVerified"
+                        android:layout_width="12dp"
+                        android:layout_height="12dp"
+                        android:id="@+id/imageView4"
                         android:src="@drawable/verified_list"
-                        android:layout_alignParentTop="false"
-                        android:layout_toRightOf="@+id/textVerified"
-                        android:layout_marginTop="1dp"
-                        android:layout_marginLeft="10dp" />
-
+                        android:layout_centerVertical="true"
+                        android:layout_toRightOf="@+id/textView5"
+                        android:layout_toEndOf="@+id/textView5"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginTop="2dp" />
                 </RelativeLayout>
 
                 <TextView
