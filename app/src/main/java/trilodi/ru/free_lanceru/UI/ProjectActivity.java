@@ -188,8 +188,6 @@ public class ProjectActivity extends ActionBarActivity {
                         onlyver.setVisibility(View.VISIBLE);
                     }
 
-
-
                     boolean select = false;
 
                     for(int i=0;i<project.responses.size();i++){
