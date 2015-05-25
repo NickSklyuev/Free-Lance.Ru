@@ -39,6 +39,10 @@
             android:name=".UI.ResponsesActivity"
             android:label="@string/title_activity_responses" >
         </activity>
+        <activity
+            android:name=".UI.AddResponse"
+            android:label="@string/title_activity_add_response" >
+        </activity>
     </application>
 
 </manifest>

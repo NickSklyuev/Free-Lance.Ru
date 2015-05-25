@@ -1,0 +1,38 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:background="#fff"
+    android:layout_height="wrap_content" >
+
+    <RadioGroup
+        android:layout_width="fill_parent"
+        android:id="@+id/all_val"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp">
+
+        <RadioButton
+            android:id="@+id/usd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#ff59aaff"
+            android:text="USD" />
+
+        <RadioButton
+            android:id="@+id/euro"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/usd"
+            android:textColor="#ff59aaff"
+            android:text="EURO" />
+
+        <RadioButton
+            android:id="@+id/rub"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/euro"
+            android:textColor="#ff59aaff"
+            android:text="РУБЛИ" />
+
+        </RadioGroup>
+
+
+</RelativeLayout>

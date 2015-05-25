@@ -19,6 +19,84 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="15dp">
+
+                <ImageView
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:id="@+id/avatarImage"
+                    android:layout_marginTop="5dp" />
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginTop="-2dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/userName"
+                        android:textColor="#333333"
+                        android:textSize="13dp"
+                        android:textStyle="bold"
+                        android:text="dfgdfgd dfgfddfgfd"
+                        android:layout_marginTop="5dp" />
+
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/online_status"
+                            android:textColor="@color/primary"
+                            android:textSize="13dp"
+                            android:text="нет на сайте"
+                            android:layout_marginTop="5dp" />
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="13dp"
+                            android:id="@+id/is_pro"
+                            android:src="@drawable/pro_list"
+                            android:layout_marginTop="7dp"
+                            android:layout_marginLeft="5dp" />
+
+                        <ImageView
+                            android:layout_width="13dp"
+                            android:layout_height="13dp"
+                            android:id="@+id/is_ver"
+                            android:layout_marginLeft="5dp"
+                            android:layout_marginTop="6dp"
+                            android:src="@drawable/verified_list" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="5dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="New Text"
+                            android:id="@+id/commentText"
+                            android:textColor="#333333"
+                            android:textSize="14dp"
+                            android:autoLink="all" />
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
 
         </LinearLayout>
 

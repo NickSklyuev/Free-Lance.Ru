@@ -18,6 +18,7 @@ import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
+import com.gc.materialdesign.views.ProgressBarCircularIndeterminate;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
@@ -54,6 +55,8 @@ public class ProjectsListFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
     android.support.v7.widget.Toolbar tb;
+
+    ProgressBarCircularIndeterminate loadProgressing;
 
     /**
      * Use this factory method to create a new instance of
@@ -103,6 +106,10 @@ public class ProjectsListFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_projects_list, container, false);
+
+        loadProgressing  =(ProgressBarCircularIndeterminate) v.findViewById(R.id.dialogProgress);
+        loadProgressing.setVisibility(View.GONE);
+
         MenuButton = (ImageView) v.findViewById(R.id.MenuButton);
         MenuButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -165,6 +172,7 @@ public class ProjectsListFragment extends Fragment {
     {
         projects.clear();
         refreshLayout.setRefreshing(true);
+        loadProgressing.setVisibility(View.VISIBLE);
 
         RequestParams localRequestParams = new RequestParams();
         localRequestParams.put("method", "projects_list");
@@ -205,6 +213,7 @@ public class ProjectsListFragment extends Fragment {
             public void onFinish(){
                 try {
                     //progDailog.dismiss();
+                    loadProgressing.setVisibility(View.GONE);
                 }catch (Exception e){
                     e.printStackTrace();
                 }
@@ -213,6 +222,7 @@ public class ProjectsListFragment extends Fragment {
 
             @Override
             public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                loadProgressing.setVisibility(View.GONE);
                 //new MessagesDialog(getActivity(),"Проекты", "Во время загрузки списка проектов произошла ошибка соединения.\nПроверьте соединение и повторите попытку.").show();
             }
         });

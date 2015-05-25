@@ -47,6 +47,13 @@
                 android:layout_weight="1"
                 android:layout_marginLeft="20dp" />
 
+            <com.gc.materialdesign.views.ProgressBarCircularIndeterminate
+                android:id="@+id/dialogProgress"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="#1E88E5"
+                android:layout_marginTop="-5dp" />
+
         </LinearLayout>
 
     </android.support.v7.widget.Toolbar>

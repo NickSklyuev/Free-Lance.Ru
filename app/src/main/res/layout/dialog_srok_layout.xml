@@ -1,0 +1,53 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:background="#fff"
+    android:layout_height="wrap_content" >
+
+
+
+    <RadioGroup
+        android:layout_width="fill_parent"
+        android:id="@+id/all_val"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:paddingLeft="16dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp"
+        android:paddingRight="16dp">
+
+        <RadioButton
+            android:id="@+id/chas"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#ff59aaff"
+            android:text="Час" />
+
+        <RadioButton
+            android:id="@+id/den"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/usd"
+            android:textColor="#ff59aaff"
+            android:text="День" />
+
+        <RadioButton
+            android:id="@+id/mesyac"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/euro"
+            android:textColor="#ff59aaff"
+            android:text="Месяц" />
+
+        <RadioButton
+            android:id="@+id/project"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/euro"
+            android:textColor="#ff59aaff"
+            android:text="Проект" />
+
+        </RadioGroup>
+
+
+</RelativeLayout>

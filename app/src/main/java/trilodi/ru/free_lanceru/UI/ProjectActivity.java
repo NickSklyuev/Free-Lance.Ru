@@ -24,6 +24,7 @@ import android.widget.TextView;
 import com.gc.materialdesign.views.ProgressBarCircularIndeterminate;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
+import com.squareup.otto.Subscribe;
 import com.squareup.picasso.Picasso;
 
 import org.apache.http.Header;
@@ -33,6 +34,9 @@ import java.text.SimpleDateFormat;
 
 import trilodi.ru.free_lanceru.Adapters.FilesAdapter;
 import trilodi.ru.free_lanceru.Components.AvatarDrawable;
+import trilodi.ru.free_lanceru.Components.BusProvider;
+import trilodi.ru.free_lanceru.Components.UpdateProjectEvent;
+import trilodi.ru.free_lanceru.Components.UpdateResponsesEvent;
 import trilodi.ru.free_lanceru.Config;
 import trilodi.ru.free_lanceru.Models.Project;
 import trilodi.ru.free_lanceru.Models.Responses;
@@ -57,10 +61,17 @@ public class ProjectActivity extends ActionBarActivity {
     String[] currency={"USD","EURO","р."};
     String[] dimension={"","/Час","/День","/Месяц","/Проект"};
 
+    @Subscribe
+    public void onUpdateProject(UpdateProjectEvent event){
+        loadProject();
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_project);
+
+        BusProvider.getInstance().register(this);
 
         loadingView = getLayoutInflater().inflate(R.layout.load_dialog_layout, null);
         ProgressBarCircularIndeterminate progresser = (ProgressBarCircularIndeterminate) loadingView.findViewById(R.id.dialogProgress);
@@ -82,7 +93,16 @@ public class ProjectActivity extends ActionBarActivity {
 
         attachesList = (ListView) findViewById(R.id.attachesList);
 
-        writeResponse = (com.gc.materialdesign.views.ButtonFloat) findViewById(R.id.buttonflat);
+        writeResponse = (com.gc.materialdesign.views.ButtonFloat) findViewById(R.id.buttonFloat);
+
+        writeResponse.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent addResponse = new Intent(ProjectActivity.this,AddResponse.class);
+                addResponse.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(addResponse);
+            }
+        });
 
         titleTExt = (TextView) findViewById(R.id.titleText);
         dateText = (TextView) findViewById(R.id.dateText);
@@ -119,7 +139,10 @@ public class ProjectActivity extends ActionBarActivity {
                 }
             };
         }
+        loadProject();
+    }
 
+    public void loadProject(){
         RequestParams localRequestParams = new RequestParams();
         localRequestParams.put("id", Config.project_id);
         localRequestParams.put("method", "projects_get");
@@ -190,17 +213,37 @@ public class ProjectActivity extends ActionBarActivity {
 
                     boolean select = false;
 
+                    BusProvider.getInstance().post(new UpdateResponsesEvent(project.responses));
+
+                    int myId = -1;
+
                     for(int i=0;i<project.responses.size();i++){
                         Responses resp = project.responses.get(i);
+
+                        if(resp.user.id.equals(Config.myUser.id)){
+                            myId = i;
+                        }
+
                         if(resp.select>0){
                             select = true;
                             break;
                         }
                     }
                     responsesText.setText("ответов "+project.responses.size());
-                    if(select){
+                    /*if(select){
                         responsesText.setText("исполнитель определен");
-                    }
+                        responsesText.setTextColor(Color.YELLOW);
+                    }*/
+
+                    responsesText.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            ResponsesActivity.responses = project.responses;
+                            Intent showResp = new Intent(ProjectActivity.this,ResponsesActivity.class);
+                            showResp.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(showResp);
+                        }
+                    });
 
                     if(project.attaches.size()>0) {
                         FilesAdapter adapter = new FilesAdapter(attachesList.getContext(), project.attaches);
@@ -232,10 +275,9 @@ public class ProjectActivity extends ActionBarActivity {
             @Override
             public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
                 finish();
-               // new MessagesDialog(ProjectActivity.this, "Проект", "Во время загрузки проекта произошла ошибка соединения.\nПроверьте соединение и повторите попытку.").show();
+                // new MessagesDialog(ProjectActivity.this, "Проект", "Во время загрузки проекта произошла ошибка соединения.\nПроверьте соединение и повторите попытку.").show();
             }
         });
-
     }
 
     public Bitmap roundImage(Bitmap bm){

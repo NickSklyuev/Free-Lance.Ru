@@ -15,10 +15,14 @@
     <string name="AUTH_DIALOG_TEXT">Пожалуйтса подождите....\nИдет авторизация</string>
 
     <string name="LOAD_PROJECT_DIALOG_TITLE">Загрузка проекта</string>
-    <string name="LOAD_PROJECT_DIALOG_TEXT">Пожалуйтса подождите....\nИдет идет загрузка проекта</string>
+    <string name="LOAD_PROJECT_DIALOG_TEXT">Пожалуйтса подождите....\nИдет загрузка проекта</string>
+
+    <string name="ADD_RESPONSE_DIALOG_TITLE">Ответ на проект</string>
+    <string name="ADD_RESPONSE_DIALOG_TEXT">Пожалуйтса подождите....\nИдет отправка ответа</string>
 
 
     <string name="RESPONSES_TITLE">Ответы на проект</string>
+    <string name="ADD_RESPONSES_TITLE">Ответить на проект</string>
 
 
     <string name="PROJECTS_TITLE">Проекты</string>
@@ -50,5 +54,6 @@
     <string name="title_activity_splash_screen">SplashScreenActivity</string>
     <string name="title_activity_project">ProjectActivity</string>
     <string name="title_activity_responses">ResponsesActivity</string>
+    <string name="title_activity_add_response">AddResponse</string>
 
 </resources>
