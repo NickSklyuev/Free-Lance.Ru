@@ -8,8 +8,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.widget.TextView;
 
 import com.loopj.android.http.AsyncHttpResponseHandler;
@@ -23,9 +21,12 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import trilodi.ru.free_lanceru.Components.DBOpenHelper;
 import trilodi.ru.free_lanceru.Config;
+import trilodi.ru.free_lanceru.Models.Messages;
 import trilodi.ru.free_lanceru.Models.Project;
 import trilodi.ru.free_lanceru.Models.User;
 import trilodi.ru.free_lanceru.Network.NetManager;
@@ -34,6 +35,8 @@ import trilodi.ru.free_lanceru.R;
 public class SplashScreenActivity extends ActionBarActivity {
 
     TextView progressText;
+
+    String upTime="0";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +56,12 @@ public class SplashScreenActivity extends ActionBarActivity {
         }else if(!localEditor.getString("login","").equals("")){
             progressText.setText("Авторизация....");
             login(localEditor.getString("login", ""),localEditor.getString("password", ""));
+        }else{
+            Intent mainActivity = new Intent(SplashScreenActivity.this, LoginActivity.class);
+            mainActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(mainActivity);
+            overridePendingTransition(R.anim.fadein, R.anim.fadeout);
+            SplashScreenActivity.this.finish();
         }
     }
 
@@ -82,8 +91,9 @@ public class SplashScreenActivity extends ActionBarActivity {
                         localEditor2.putString("password", password);
                         localEditor2.putLong("login_time", (System.currentTimeMillis() / 1000L));
                         localEditor2.putString("id", Config.myUser.id);
+                        localEditor2.putBoolean("first_launch_not_login", false);
                         localEditor2.commit();
-                        progressText.setText("Загрузка проектов....");
+
                         loadProjects();
 
                     }else{
@@ -124,17 +134,16 @@ public class SplashScreenActivity extends ActionBarActivity {
 
     private void loadProjects()
     {
-
+        progressText.setText("Загрузка проектов....");
 
         RequestParams localRequestParams = new RequestParams();
         localRequestParams.put("method", "projects_list");
         localRequestParams.put("page", 1);
-        NetManager.getInstance(this).post(localRequestParams, new AsyncHttpResponseHandler()
-        {
+        NetManager.getInstance(this).post(localRequestParams, new AsyncHttpResponseHandler() {
 
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-                try{
+                try {
                     String str = new String(responseBody, "UTF-8");
                     System.out.println(str);
 
@@ -143,36 +152,34 @@ public class SplashScreenActivity extends ActionBarActivity {
 
                     ArrayList<Project> projects = new ArrayList<Project>();
 
-                    try{
-                        for (int i=0; i<ProjectsList.length(); i++){
+                    try {
+                        for (int i = 0; i < ProjectsList.length(); i++) {
                             //this.Project(projectsArray.getJSONObject(i));
                             projects.add(new Project(ProjectsList.getJSONObject(i)));
                         }
-                    }catch (Exception e){
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
 
                     ProjectsListFragment.projects = projects;
-
+                    /*
                     Intent mainActivity = new Intent(SplashScreenActivity.this, MainActivity.class);
                     mainActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(mainActivity);
                     overridePendingTransition(R.anim.fadein, R.anim.fadeout);
                     SplashScreenActivity.this.finish();
+                    */
 
 
-                }catch(Exception e){
+
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
 
             @Override
-            public void onFinish(){
-                try {
-                    //progDailog.dismiss();
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
+            public void onFinish() {
+                loadMEssages();
                 super.onFinish();
             }
 
@@ -185,53 +192,8 @@ public class SplashScreenActivity extends ActionBarActivity {
     }
 
     private void loadSettings(){
-        RequestParams localRequestParams = new RequestParams();
-        localRequestParams.put("method", "settings_get");
 
         progressText.setText("Загрузка настроек приложения...");
-
-        /*NetManager.getInstance(this).post(localRequestParams, new AsyncHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-                //progDailog.dismiss();
-                try {
-                    String str = new String(responseBody, "UTF-8");
-                    System.out.println(str);
-
-                    JSONObject settings = new JSONObject(str);
-                    if(Integer.parseInt(settings.get("error").toString())==0){
-                        SharedPreferences.Editor localEditor2 = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit();
-                        localEditor2.putBoolean("first_launch",false);
-                        localEditor2.commit();
-
-                        progressText.setText("Сохранение настроек....");
-
-                        new updateSettings().execute(str);
-
-                    }
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-            }
-
-            @Override
-            public void onFinish() {
-                try {
-                    //progDailog.dismiss();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                super.onFinish();
-            }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                //new MessagesDialog(MainActivity.this, "Настройки системы", "Во время загрузки настроек было утеряно соединение с интернетом\nПроверьте соединение").show();
-            }
-        });
-        */
 
         try{
             String str="";
@@ -256,26 +218,258 @@ public class SplashScreenActivity extends ActionBarActivity {
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_splash_screen, menu);
-        return true;
+    public void loadMEssages(){
+
+        progressText.setText("Загрузка сообщений...");
+
+        Cursor c = null;
+        c=Config.db.query("message", null, null, null, null, null, "update_time DESC");
+
+        if (c.moveToFirst()) {
+            int ut = c.getColumnIndex("update_time");
+
+            upTime=c.getString(ut);
+
+        }
+        c.close();
+
+        RequestParams localRequestParams = new RequestParams();
+        localRequestParams.put("last_update", upTime);
+        localRequestParams.put("method", "messages_list");
+        NetManager.getInstance(this).post(localRequestParams, new AsyncHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                try {
+                    String str = new String(responseBody, "UTF-8");
+                    System.out.println(str);
+
+                    progressText.setText("Сохранение сообщений...");
+
+                    JSONObject messages = new JSONObject(str);
+
+                    new updateMEssages().execute(messages.toString());
+
+                } catch (Exception e) {
+                    loadUserList();
+                }
+            }
+
+            @Override
+            public void onFinish() {
+                try {
+                    //progDailog.dismiss();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                super.onFinish();
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                Intent mainActivity = new Intent(SplashScreenActivity.this, MainActivity.class);
+                mainActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(mainActivity);
+                overridePendingTransition(R.anim.fadein, R.anim.fadeout);
+                SplashScreenActivity.this.finish();
+                super.onFinish();
+            }
+        });
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+    private void loadUserList(){
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        progressText.setText("Загрузка списка чатов...");
+
+        //ArrayList allUsers = new ArrayList();
+        Map<String, String> userIdsList = new HashMap<String, String>();
+        Map<String, String> userIdsListNotSet = new HashMap<String, String>();
+        Cursor cc =Config.db.query("user", null, null, null, null, null, null);
+        if (cc.moveToFirst()) {
+            int uID = cc.getColumnIndex("id");
+            do{
+                //allUsers.add(cc.getString(uID));
+                userIdsList.put(cc.getString(uID),cc.getString(uID));
+            }while(cc.moveToNext());
+        }
+        cc.close();
+
+        //ArrayList mUList= new ArrayList();
+        Cursor c =Config.db.query("message", null, null, null, null, null, "update_time DESC");
+        if (c.moveToFirst()) {
+            int uID = c.getColumnIndex("from_id");
+            int toID = c.getColumnIndex("to_id");
+            do{
+                if(!userIdsList.containsKey(c.getString(toID))){
+                    userIdsListNotSet.put(c.getString(toID),c.getString(toID));
+                }
+                if(!userIdsList.containsKey(c.getString(uID))){
+                    userIdsListNotSet.put(c.getString(uID),c.getString(uID));
+                }
+            }while(c.moveToNext());
+        }
+        c.close();
+
+
+        if(userIdsListNotSet.size()>0) {
+            RequestParams localRequestParams = new RequestParams();
+            localRequestParams.put("method", "users_list");
+
+            for(Map.Entry<String, String> entry : userIdsListNotSet.entrySet()) {
+                String key = entry.getKey();
+                String value = entry.getValue();
+                localRequestParams.put("ids[" + key + "]", value);
+            }
+
+            NetManager.getInstance(this).post(localRequestParams, new AsyncHttpResponseHandler() {
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                    try {
+                        String str = new String(responseBody, "UTF-8");
+                        System.out.println(str);
+
+                        JSONObject userData = new JSONObject(str);
+
+                        new updateUsers().execute(userData.toString());
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                @Override
+                public void onFinish() {super.onFinish();}
+
+                @Override
+                public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                    Intent mainActivity = new Intent(SplashScreenActivity.this, MainActivity.class);
+                    mainActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(mainActivity);
+                    overridePendingTransition(R.anim.fadein, R.anim.fadeout);
+                    SplashScreenActivity.this.finish();
+                }
+            });
+        }else {
+            Intent mainActivity = new Intent(SplashScreenActivity.this, MainActivity.class);
+            mainActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(mainActivity);
+            overridePendingTransition(R.anim.fadein, R.anim.fadeout);
+            SplashScreenActivity.this.finish();
         }
 
-        return super.onOptionsItemSelected(item);
+    }
+
+    public class updateMEssages extends AsyncTask<String, String, String> {
+
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+
+            loadUserList();
+        }
+
+        @Override
+        protected String doInBackground(String...paramArrayOfString) {
+            try {
+                JSONObject messages=new JSONObject(paramArrayOfString[0]);
+
+                if (messages.get("error").toString().equals("0")) {
+                    JSONArray list = messages.getJSONObject("data").getJSONArray("list");
+                    if (list.length() > 0) {
+                        for (int i = 0; i < list.length(); i++) {
+
+                            Messages message = new Messages(list.getJSONObject(i));
+                            Cursor c = Config.db.query("message", null, "id=?", new String[]{message.id}, null, null, "update_time DESC");
+                            if (!c.moveToFirst()) {
+                                ContentValues cv = new ContentValues();
+                                cv.put("create_time", message.create_time);
+                                cv.put("update_time", message.update_time);
+                                cv.put("from_id", message.from_id);
+                                cv.put("to_id", message.to_id);
+                                cv.put("text", message.text);
+                                cv.put("status", message.status);
+                                cv.put("read", message.read);
+                                cv.put("id", message.id);
+                                Config.db.insert("message", null, cv);
+                            }
+                            c.close();
+                        }
+
+                    }
+                }
+
+
+            } catch (Exception localException) {
+                localException.printStackTrace();
+            }
+            return null;
+        }
+    }
+
+    public class updateUsers extends AsyncTask<String, String, String> {
+
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+
+            Intent mainActivity = new Intent(SplashScreenActivity.this, MainActivity.class);
+            mainActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(mainActivity);
+            overridePendingTransition(R.anim.fadein, R.anim.fadeout);
+            SplashScreenActivity.this.finish();
+        }
+
+        @Override
+        protected String doInBackground(String...paramArrayOfString) {
+            try {
+                JSONObject userData=new JSONObject(paramArrayOfString[0]);
+
+                if (userData.get("error").toString().equals("0")) {
+                    JSONArray users = userData.getJSONObject("data").getJSONArray("users");
+
+                    for (int i = 0; i < users.length(); i++) {
+                        JSONObject user = users.getJSONObject(i);
+                        Cursor c = Config.db.query("user", null, "id=?", new String[]{user.get("id").toString()}, null, null, "update_time DESC");
+                        if (c.moveToFirst()) {
+                            ContentValues cv = new ContentValues();
+                            cv.put("create_time", user.get("create_time").toString());
+                            cv.put("update_time", user.get("update_time").toString());
+                            cv.put("status", user.get("status").toString());
+                            cv.put("username", user.get("username").toString());
+                            cv.put("firstname", user.get("firstname").toString());
+                            cv.put("lastname", user.get("lastname").toString());
+                            cv.put("pro", user.get("pro").toString());
+                            cv.put("verified", user.get("verified").toString());
+                            cv.put("role", user.get("role").toString());
+                            cv.put("spec", user.get("spec").toString());
+                            JSONObject avatarURLObject = user.getJSONObject("avatar");
+                            cv.put("avatar_url", avatarURLObject.get("url").toString() + "f_" + avatarURLObject.get("file").toString());
+                            Config.db.update("user", cv, "id=?",new String[]{user.get("id").toString()});
+                        }else {
+                            ContentValues cv = new ContentValues();
+                            cv.put("id", user.get("id").toString());
+                            cv.put("create_time", user.get("create_time").toString());
+                            cv.put("update_time", user.get("update_time").toString());
+                            cv.put("status", user.get("status").toString());
+                            cv.put("username", user.get("username").toString());
+                            cv.put("firstname", user.get("firstname").toString());
+                            cv.put("lastname", user.get("lastname").toString());
+                            cv.put("pro", user.get("pro").toString());
+                            cv.put("verified", user.get("verified").toString());
+                            cv.put("role", user.get("role").toString());
+                            cv.put("spec", user.get("spec").toString());
+                            JSONObject avatarURLObject = user.getJSONObject("avatar");
+                            cv.put("avatar_url", avatarURLObject.get("url").toString() + "f_" + avatarURLObject.get("file").toString());
+                            Config.db.insert("user", null, cv);
+                        }
+                    }
+                }
+
+
+            } catch (Exception localException) {
+                localException.printStackTrace();
+            }
+            return null;
+        }
     }
 
     public class updateSettings extends AsyncTask<String, String, String> {
@@ -409,8 +603,5 @@ public class SplashScreenActivity extends ActionBarActivity {
             }
             return null;
         }
-
-
-
     }
 }

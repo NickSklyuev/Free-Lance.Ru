@@ -43,6 +43,8 @@ public class LoginActivity extends ActionBarActivity {
 
     InputMethodManager imm;
 
+    SharedPreferences localEditor;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,7 +52,8 @@ public class LoginActivity extends ActionBarActivity {
         imm = (InputMethodManager)getSystemService(
                 Context.INPUT_METHOD_SERVICE);
 
-        SharedPreferences localEditor = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        localEditor = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.login_toolbar);
 
@@ -144,7 +147,6 @@ public class LoginActivity extends ActionBarActivity {
                         errorText.setVisibility(View.GONE);
                         Config.myUser = new User(response.getJSONObject("data"));
 
-
                         SharedPreferences.Editor localEditor2 = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit();
                         localEditor2.putString("login",Config.myUser.username);
                         localEditor2.putString("password", passwordEdit.getText().toString());
@@ -152,10 +154,21 @@ public class LoginActivity extends ActionBarActivity {
                         localEditor2.putString("id", Config.myUser.id);
                         localEditor2.commit();
 
-                        Intent mainActivity = new Intent(LoginActivity.this, MainActivity.class);
-                        mainActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(mainActivity);
-                        finish();
+                        if(localEditor.getBoolean("first_launch_not_login", true)){
+                            Intent mainActivity = new Intent(LoginActivity.this, SplashScreenActivity.class);
+                            mainActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(mainActivity);
+                            finish();
+                        }else{
+                            Intent mainActivity = new Intent(LoginActivity.this, MainActivity.class);
+                            mainActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(mainActivity);
+                            finish();
+                        }
+
+
+
+
                     }
                     if (response.get("error_text").toString().equals("ERROR_EMPTY_USERNAME")) {
                         errorText.setText(getResources().getString(R.string.ERROR_EMPTY_USERNAME));

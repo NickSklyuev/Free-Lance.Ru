@@ -33,6 +33,24 @@ public class User {
     public Map<String, String> avatar = new HashMap<String, String>();
     public int age;
     public int online;
+    public String avatar_url;
+
+    public User(){}
+
+    public User(String id,String create_time, String update_time, String status, String username, String firstname, String lastname, String pro, String verified,String role, String spec, String avatar_url){
+        this.create_time = Integer.parseInt(create_time);
+        this.update_time = Integer.parseInt(update_time);
+        this.status = Integer.parseInt(status);
+        this.username = username;
+        this.firstname = firstname;
+        this.lastname = lastname;
+        this.pro = Integer.parseInt(pro);
+        this.verified = Integer.parseInt(verified);
+        this.role = Integer.parseInt(role);
+        this.spec = spec;
+        this.avatar_url = avatar_url;
+        this.id = id;
+    }
 
     public User(JSONObject userData){
         this.userData = userData;

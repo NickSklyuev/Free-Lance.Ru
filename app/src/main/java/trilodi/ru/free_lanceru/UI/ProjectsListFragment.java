@@ -88,6 +88,7 @@ public class ProjectsListFragment extends Fragment {
         ps.topMargin = 0;
         refreshLayout.setLayoutParams(ps);
         refreshLayout.requestLayout();
+
     }
 
     private void showViews() {

@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,9 @@ import android.widget.TextView;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
+import ru.wapstart.plus1.sdk.Plus1BannerAsker;
+import ru.wapstart.plus1.sdk.Plus1BannerView;
+import ru.wapstart.plus1.sdk.Plus1Request;
 import trilodi.ru.free_lanceru.Config;
 import trilodi.ru.free_lanceru.Models.Project;
 import trilodi.ru.free_lanceru.R;
@@ -26,6 +30,8 @@ public class ProjectsListAdapter extends RecyclerView.Adapter<ProjectsListAdapte
     String[] currency={"USD","EURO","р."};
     String[] dimension={"","/Час","/День","/Месяц","/Проект"};
     OnItemClickListener mItemClickListener;
+
+    Plus1BannerAsker mAsker;
 
     public ProjectsListAdapter(ArrayList<Project> projects){
         this.projects = projects;
@@ -82,6 +88,54 @@ public class ProjectsListAdapter extends RecyclerView.Adapter<ProjectsListAdapte
             holder.only_verified.setVisibility(View.VISIBLE);
         }
 
+        holder.mBannerView.setVisibility(View.GONE);
+
+        if(i%4==0&&i>0){
+            holder.mBannerView.setVisibility(View.VISIBLE);
+            mAsker =
+                    new Plus1BannerAsker(
+                            new Plus1Request()
+                                    .setApplicationId(12777),
+                            holder.mBannerView
+                                    .enableAnimationFromTop()
+                                    .enableCloseButton()
+                    )
+                            .setCallbackUrl("wsp1bart://ru.wapstart.plus1.bart")
+                            .setRefreshDelay(10); // default value
+
+            holder.mBannerView
+                    .addListener(new Plus1BannerView.OnShowListener() {
+                        public void onShow(Plus1BannerView pbv) {
+                            Log.d("BartActivity", "OnShowListener was touched");
+                        }
+                    })
+                    .addListener(new Plus1BannerView.OnHideListener() {
+                        public void onHide(Plus1BannerView pbv) {
+                            Log.d("BartActivity", "OnHideListener was touched");
+                        }
+                    })
+                    .addListener(new Plus1BannerView.OnCloseButtonListener() {
+                        public void onCloseButton(Plus1BannerView pbv) {
+                            Log.d("BartActivity", "OnCloseButtonListener was touched");
+                        }
+                    })
+                    .addListener(new Plus1BannerView.OnImpressionListener() {
+                        public void onImpression(Plus1BannerView pbv) {
+                            Log.d("BartActivity", "OnImpressionListener was touched");
+                        }
+                    })
+                    .addListener(new Plus1BannerView.OnTrackClickListener() {
+                        public void onTrackClick(Plus1BannerView pbv) {
+                            Log.d("BartActivity", "OnTrackClickListener was touched");
+                        }
+                    });
+
+            mAsker.refreshBanner();
+        }else{
+            holder.mBannerView.setVisibility(View.GONE);
+        }
+
+
     }
 
     @Override
@@ -94,6 +148,8 @@ public class ProjectsListAdapter extends RecyclerView.Adapter<ProjectsListAdapte
         CardView projectCard;
         TextView title,price,descr, date;
         RelativeLayout only_pro, only_verified;
+
+        Plus1BannerView mBannerView;
         public ViewHolder(View v) {
             super(v);
 
@@ -117,6 +173,10 @@ public class ProjectsListAdapter extends RecyclerView.Adapter<ProjectsListAdapte
 
             only_pro = (RelativeLayout) projectCard.findViewById(R.id.onlypro);
             only_verified = (RelativeLayout) projectCard.findViewById(R.id.onlyverified);
+
+            mBannerView = (Plus1BannerView) v.findViewById(R.id.plus1BannerView);
+
+
 
         }
 
