@@ -18,6 +18,7 @@ import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
+import com.appodeal.ads.Appodeal;
 import com.gc.materialdesign.views.ProgressBarCircularIndeterminate;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
@@ -79,6 +80,7 @@ public class ProjectsListFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
     }
 
     private void hideViews() {
@@ -163,6 +165,8 @@ public class ProjectsListFragment extends Fragment {
             projectsRecyclerView.setAdapter(mAdapter);
             refreshLayout.setRefreshing(false);
         }
+
+
 
 
         return v;
@@ -265,5 +269,14 @@ public class ProjectsListFragment extends Fragment {
         // TODO: Update argument type and name
         public void onFragmentInteraction(Uri uri);
     }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        Appodeal.hide(getActivity(), Appodeal.BANNER_VIEW);
+        Appodeal.setBannerViewId(R.id.appodealBannerView);
+        Appodeal.show(getActivity(), Appodeal.BANNER_VIEW);
+    }
+
 
 }

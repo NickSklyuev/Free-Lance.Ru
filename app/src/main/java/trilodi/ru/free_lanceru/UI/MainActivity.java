@@ -3,11 +3,11 @@ package trilodi.ru.free_lanceru.UI;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
-import android.view.Menu;
-import android.view.MenuItem;
 
+import com.appodeal.ads.Appodeal;
+
+import trilodi.ru.free_lanceru.Config;
 import trilodi.ru.free_lanceru.R;
 
 public class MainActivity extends ActionBarActivity
@@ -20,9 +20,7 @@ public class MainActivity extends ActionBarActivity
      */
     private NavigationDrawerFragment mNavigationDrawerFragment;
 
-    /**
-     * Used to store the last screen title. For use in {@link #restoreActionBar()}.
-     */
+
     private CharSequence mTitle;
 
     @Override
@@ -31,6 +29,8 @@ public class MainActivity extends ActionBarActivity
         setContentView(R.layout.activity_main);
 
         drawerLayout = (DrawerLayout)findViewById(R.id.drawer_layout);
+
+        Appodeal.initialize(this, Config.appKey);
 
 
         mNavigationDrawerFragment = (NavigationDrawerFragment)

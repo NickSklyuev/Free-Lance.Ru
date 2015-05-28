@@ -2,6 +2,7 @@ package trilodi.ru.free_lanceru.Models;
 
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,17 +24,19 @@ public class User {
     public int country_id;
     public String prof_id;
     public String prof_group_id;
-    public String firstname;
-    public String lastname;
+    public String firstname = "";
+    public String lastname = "";
     public String birthday;
-    public String username;
-    public String email;
+    public String username = "";
+    public String email = "";
     public int create_time;
     public int update_time;
     public Map<String, String> avatar = new HashMap<String, String>();
     public int age;
     public int online;
-    public String avatar_url;
+    public String avatar_url = "";
+    public int rating = 0;
+    public ArrayList<UserReview> reviews = new ArrayList<UserReview>();
 
     public User(){}
 
@@ -84,6 +87,18 @@ public class User {
 
             this.age = userData.getInt("age");
             this.online = userData.getInt("online");
+            try{
+                this.rating = userData.getInt("rating");
+
+                for(int i=0; i<userData.getJSONArray("reviews").length();i++){
+                    JSONObject review = userData.getJSONArray("reviews").getJSONObject(i);
+                    this.reviews.add(new UserReview(review));
+                }
+
+
+            }catch (Exception e){
+                e.printStackTrace();
+            }
 
         }catch(Exception e){
             e.printStackTrace();

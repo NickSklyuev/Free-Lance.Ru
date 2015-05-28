@@ -79,7 +79,7 @@ public class NavigationDrawerFragment extends Fragment {
 
     Picasso mPicasso;
     ImageView avatar, proImage, verImage;
-    TextView userNames, userEmail;
+    TextView userNames, userEmail, reviewsCount;
 
     private com.squareup.picasso.Target loadtarget;
 
@@ -118,10 +118,14 @@ public class NavigationDrawerFragment extends Fragment {
 
         avatar = (ImageView) mainDrawerLayout.findViewById(R.id.avatarImage);
         proImage = (ImageView) mainDrawerLayout.findViewById(R.id.proImage);
-        verImage = (ImageView) mainDrawerLayout.findViewById(R.id.verifiedImage);
+        verImage = (ImageView) mainDrawerLayout.findViewById(R.id.verImage);
 
         userNames = (TextView) mainDrawerLayout.findViewById(R.id.userNames);
         userEmail = (TextView) mainDrawerLayout.findViewById(R.id.userEmail);
+        reviewsCount = (TextView) mainDrawerLayout.findViewById(R.id.reviewsCount);
+        TextView ratingText = (TextView) mainDrawerLayout.findViewById(R.id.ratingText);
+
+        ratingText.setText("Рейтинг: "+Config.myUser.rating);
 
         userNames.setText(Config.myUser.firstname);
         if(!Config.myUser.lastname.equals("")){
@@ -138,12 +142,14 @@ public class NavigationDrawerFragment extends Fragment {
         }
 
         if(Config.myUser.verified==1){
-            verImage.setImageResource(R.drawable.verified);
+            verImage.setVisibility(View.VISIBLE);
         }else{
-            verImage.setImageResource(R.drawable.not_verified);
+            verImage.setVisibility(View.GONE);
         }
 
         userEmail.setText(Config.myUser.email);
+
+        reviewsCount.setText("Отзывов: "+Config.myUser.reviews.size());
 
         mPicasso = Picasso.with(avatar.getContext());
 

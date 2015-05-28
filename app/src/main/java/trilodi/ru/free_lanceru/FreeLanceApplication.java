@@ -4,9 +4,8 @@ import android.app.Application;
 import android.content.ComponentCallbacks;
 import android.content.Context;
 import android.content.res.Configuration;
-import android.provider.Settings;
 
-import com.loopj.android.http.PersistentCookieStore;
+import com.appodeal.ads.Appodeal;
 
 /**
  * Created by REstoreService on 23.05.15.
@@ -19,6 +18,7 @@ public class FreeLanceApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+
 
     }
 

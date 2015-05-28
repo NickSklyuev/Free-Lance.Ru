@@ -1,27 +1,22 @@
 package trilodi.ru.free_lanceru.UI;
 
-import android.app.Activity;
 import android.content.ContentValues;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 
 import com.appodeal.ads.Appodeal;
 import com.gc.materialdesign.views.ProgressBarCircularIndeterminate;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
-import com.squareup.otto.Subscribe;
 
 import org.apache.http.Header;
 import org.json.JSONArray;
@@ -31,106 +26,86 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import trilodi.ru.free_lanceru.Adapters.ChatsListAdapter;
+import trilodi.ru.free_lanceru.Adapters.MessageListAdapter;
 import trilodi.ru.free_lanceru.Components.BusProvider;
 import trilodi.ru.free_lanceru.Config;
-import trilodi.ru.free_lanceru.Models.Chats;
 import trilodi.ru.free_lanceru.Models.Messages;
 import trilodi.ru.free_lanceru.Models.User;
 import trilodi.ru.free_lanceru.Network.NetManager;
 import trilodi.ru.free_lanceru.R;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link MessagesFragmant.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link MessagesFragmant#newInstance} factory method to
- * create an instance of this fragment.
- */
-public class MessagesFragmant extends Fragment {
+public class MessageActivity extends ActionBarActivity {
 
-    private ImageView MenuButton;
+    public static String chatId = "0";
+    public static String from_id = "0";
+    public static String to_id = "0";
 
-    ProgressBarCircularIndeterminate progerssIndicator;
-
-    private OnFragmentInteractionListener mListener;
+    ArrayList<Messages> messages = new ArrayList<Messages>();
+    Map<String, User> users = new HashMap<String, User>();
 
     private RecyclerView messagesRecyclerView;
-    private ChatsListAdapter mAdapter;
+    private MessageListAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
 
     private SwipeRefreshLayout refreshLayout;
 
-    Map<String, Chats> chatList = new HashMap<String, Chats>();
-    ArrayList<Chats> chatArray = new ArrayList<Chats>();
-    ArrayList<String> chatIDS = new ArrayList<String>();
+    ImageView backButton, sendButton;
 
-    String upTime="0";
+    EditText messageText;
 
+    ProgressBarCircularIndeterminate progressIndicator;
 
-    @Subscribe
-    public void onUpdateResponses(ArrayList<Boolean> event){
-        try{
-            if (event.get(0)==true){
-                chatList.clear();
-                chatArray.clear();
-                chatIDS.clear();
-                new showChats().execute("");
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-    }
+    String upTime = "0";
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @return A new instance of fragment MessagesFragmant.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static MessagesFragmant newInstance() {
-        MessagesFragmant fragment = new MessagesFragmant();
-        Bundle args = new Bundle();
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    public MessagesFragmant() {
-        // Required empty public constructor
-    }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_message);
 
-    }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
 
-        BusProvider.getInstance().register(this);
-        // Inflate the layout for this fragment
+        progressIndicator = (ProgressBarCircularIndeterminate) findViewById(R.id.dialogProgress);
+        progressIndicator.setVisibility(View.GONE);
 
-        View v = inflater.inflate(R.layout.fragment_messages_fragmant, container, false);
-        MenuButton = (ImageView) v.findViewById(R.id.MenuButton);
-        MenuButton.setOnClickListener(new View.OnClickListener() {
+        messagesRecyclerView = (RecyclerView) findViewById(R.id.projectList);
+        messagesRecyclerView.setHasFixedSize(true);
+        mLayoutManager = new LinearLayoutManager(messagesRecyclerView.getContext(),LinearLayoutManager.VERTICAL,true);
+        messagesRecyclerView.setLayoutManager(mLayoutManager);
+
+        backButton = (ImageView) findViewById(R.id.backButton);
+
+        backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MainActivity.drawerLayout.openDrawer(Gravity.LEFT);
+                MessageActivity.this.finish();
             }
         });
 
-        progerssIndicator = (ProgressBarCircularIndeterminate) v.findViewById(R.id.dialogProgress);
+        messageText = (EditText) findViewById(R.id.messageText);
+        sendButton = (ImageView) findViewById(R.id.sendButton);
+
+        sendButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendMEssage();
+            }
+        });
+
+        refreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_layout);
 
 
-        messagesRecyclerView = (RecyclerView) v.findViewById(R.id.projectList);
-        messagesRecyclerView.setHasFixedSize(true);
-        mLayoutManager = new LinearLayoutManager(getActivity());
-        messagesRecyclerView.setLayoutManager(mLayoutManager);
-        refreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipe_layout);
+        loadLocaleUser(from_id);
+        loadLocaleUser(to_id);
+        loadLocaleMessage();
+
+
+
+
+        mAdapter = new MessageListAdapter(messages,users);
+        messagesRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        messagesRecyclerView.setAdapter(mAdapter);
+        refreshLayout.setRefreshing(false);
 
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -139,138 +114,147 @@ public class MessagesFragmant extends Fragment {
             }
         });
 
-        refreshLayout.setColorSchemeResources(android.R.color.holo_blue_bright,
-                android.R.color.holo_green_light,
-                android.R.color.holo_orange_light,
-                android.R.color.holo_red_light);
-
-
-
-        new showChats().execute("");
-
-
-        return v;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
+    public void sendMEssage(){
+        progressIndicator.setVisibility(View.VISIBLE);
+        RequestParams localRequestParams = new RequestParams();
+        localRequestParams.put("method", "messages_send");
+        localRequestParams.put("to_id", chatId);
+        localRequestParams.put("text", messageText.getText().toString());
 
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-    }
+        messageText.setText("");
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
+        NetManager.getInstance(this).post(localRequestParams, new AsyncHttpResponseHandler()
+        {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                try{
+                    try{
+                        String str = new String(responseBody, "UTF-8");
+                        System.out.println(str);
 
-    public class showChats extends AsyncTask<String, String, String> {
+                        JSONObject localJSONObject = new JSONObject(str);
+                        JSONObject mess=localJSONObject.getJSONObject("data").getJSONObject("message");
 
-        @Override
-        protected void onPostExecute(String result) {
-            super.onPostExecute(result);
-            mAdapter = new ChatsListAdapter(chatArray);
-            messagesRecyclerView.setItemAnimator(new DefaultItemAnimator());
-            messagesRecyclerView.setAdapter(mAdapter);
-            refreshLayout.setRefreshing(false);
-            progerssIndicator.setVisibility(View.GONE);
-        }
+                        ContentValues cv = new ContentValues();
+                        cv.put("create_time", mess.get("create_time").toString());
+                        cv.put("update_time", mess.get("update_time").toString());
+                        cv.put("from_id", mess.get("from_id").toString());
+                        cv.put("to_id", mess.get("to_id").toString());
+                        cv.put("text", mess.get("text").toString());
+                        cv.put("status", mess.get("status").toString());
+                        cv.put("read", mess.get("read").toString());
+                        cv.put("id", mess.get("id").toString());
+                        Config.db.insert("message", null, cv);
 
-        @Override
-        protected String doInBackground(String...paramArrayOfString) {
-            Cursor c =Config.db.query("message", null, null, null, null, null, "create_time DESC");
-            if (c.moveToFirst()) {
-                int uID = c.getColumnIndex("from_id");
-                int toID = c.getColumnIndex("to_id");
-                int read = c.getColumnIndex("read");
-                do{
-                    int unreat = 0;
+                        ArrayList<Boolean> b = new ArrayList<Boolean>();
+                        b.add(true);
 
+                        BusProvider.getInstance().post(b);
 
+                        messages.clear();
+                        users.clear();
 
-                    if (!Config.myUser.id.equals(c.getString(uID))){
-                        if(c.getString(read).equals("0")){
-                            unreat = 1;
-                        }
-                        if(!chatList.containsKey(c.getString(uID))){
-                            chatList.put(c.getString(uID), new Chats(c.getString(uID),c.getString(toID),1,unreat,c.getString(uID), new User()));
-                            chatIDS.add(c.getString(uID));
-                        }else{
-                            Chats chat = chatList.get(c.getString(uID));
-                            chat.unreded+=unreat;
-                            chat.messages+=1;
-                            chatList.put(c.getString(uID), chat);
-                        }
+                        progressIndicator.setVisibility(View.GONE);
 
-                    }else{
-                        if(!chatList.containsKey(c.getString(toID))){
-                            chatList.put(c.getString(toID), new Chats(c.getString(uID),c.getString(toID),1,unreat,c.getString(toID), new User()));
-                            chatIDS.add(c.getString(toID));
-                        }else{
-                            Chats chat = chatList.get(c.getString(toID));
-                            chat.unreded+=unreat;
-                            chat.messages+=1;
-                            chatList.put(c.getString(toID), chat);
-                        }
+                        loadLocaleUser(from_id);
+                        loadLocaleUser(to_id);
+                        loadLocaleMessage();
 
+                        mAdapter = new MessageListAdapter(messages,users);
+                        messagesRecyclerView.setItemAnimator(new DefaultItemAnimator());
+                        messagesRecyclerView.setAdapter(mAdapter);
+                        refreshLayout.setRefreshing(false);
+
+                    }catch(Exception e){
+                        e.printStackTrace();
                     }
-                }while(c.moveToNext());
-            }
-            c.close();
-
-            System.out.println(chatList);
-
-            for(int i = 0; i<chatIDS.size(); i++) {
-                //String key = entry.getKey();
-                //System.out.println(key);
-                //Chats value = entry.getValue();
-
-                Chats chat = chatList.get(chatIDS.get(i));
-
-                c = Config.db.query("user", null, "id=?", new String[]{chat.id}, null, null, null);
-                if (c.moveToFirst()) {
-
-                    int create_time = c.getColumnIndex("create_time");
-                    int update_time = c.getColumnIndex("update_time");
-                    int status = c.getColumnIndex("status");
-                    int username = c.getColumnIndex("username");
-                    int firstname = c.getColumnIndex("firstname");
-                    int lastname = c.getColumnIndex("lastname");
-                    int pro = c.getColumnIndex("pro");
-                    int verified = c.getColumnIndex("verified");
-                    int role = c.getColumnIndex("role");
-                    int spec = c.getColumnIndex("spec");
-                    int avatar_url = c.getColumnIndex("avatar_url");
-
-                    System.out.println(c.getString(username));
-
-                    User chat_user = new User(chat.id,c.getString(create_time), c.getString(update_time),c.getString(status),c.getString(username), c.getString(firstname), c.getString(lastname), c.getString(pro), c.getString(verified), c.getString(role),c.getString(spec),c.getString(avatar_url));
-                    chat.user = chat_user;
-                    //chatList.put(key,value);
-                    chatArray.add(chat);
-                }
-                c.close();
-
-                if(i>=20){
-                    break;
+                }catch(Exception e){
+                    e.printStackTrace();
                 }
             }
-            return null;
+
+            @Override
+            public void onFinish(){
+                super.onFinish();
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                //new MessagesDialog(ReadMessageActivity.this,"Сообщения", "Во время отправки сообщения произошла ошибка соединения.\nПроверьте соединение и повторите попытку.").show();
+            }
+        });
+    }
+
+    private void loadLocaleMessage(){
+
+        progressIndicator.setVisibility(View.VISIBLE);
+        Cursor c =Config.db.query("message", null, "from_id=? OR to_id=?", new String[]{chatId,chatId}, null, null, "create_time DESC");
+        if (c.moveToFirst()) {
+            int id = c.getColumnIndex("id");
+            int create_time = c.getColumnIndex("create_time");
+            int update_time = c.getColumnIndex("update_time");
+            int from_id = c.getColumnIndex("from_id");
+            int to_id = c.getColumnIndex("to_id");
+            int read = c.getColumnIndex("read");
+            int text = c.getColumnIndex("text");
+            int status = c.getColumnIndex("status");
+            do{
+                Messages message = new Messages();
+                message.id = c.getString(id);
+                message.create_time = c.getString(create_time);
+                message.update_time = c.getString(update_time);
+                message.from_id = c.getString(from_id);
+                message.to_id = c.getString(to_id);
+                message.read = c.getString(read);
+                message.text = c.getString(text);
+                message.status = c.getString(status);
+                messages.add(message);
+            }while(c.moveToNext());
         }
+        c.close();
+        progressIndicator.setVisibility(View.GONE);
+        refreshLayout.setRefreshing(false);
+    }
+
+    private void loadLocaleUser(String user_id){
+        progressIndicator.setVisibility(View.VISIBLE);
+        Cursor c = Config.db.query("user", null, "id=?", new String[]{user_id}, null, null, null);
+        if (c.moveToFirst()) {
+
+            int create_time = c.getColumnIndex("create_time");
+            int update_time = c.getColumnIndex("update_time");
+            int status = c.getColumnIndex("status");
+            int username = c.getColumnIndex("username");
+            int firstname = c.getColumnIndex("firstname");
+            int lastname = c.getColumnIndex("lastname");
+            int pro = c.getColumnIndex("pro");
+            int verified = c.getColumnIndex("verified");
+            int role = c.getColumnIndex("role");
+            int spec = c.getColumnIndex("spec");
+            int avatar_url = c.getColumnIndex("avatar_url");
+
+            System.out.println(c.getString(username));
+
+            User chat_user = new User(user_id,c.getString(create_time), c.getString(update_time),c.getString(status),c.getString(username), c.getString(firstname), c.getString(lastname), c.getString(pro), c.getString(verified), c.getString(role),c.getString(spec),c.getString(avatar_url));
+            users.put(user_id, chat_user);
+        }
+        c.close();
+        progressIndicator.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        Appodeal.hide(this, Appodeal.BANNER_VIEW);
+        Appodeal.setBannerViewId(R.id.appodealBannerView);
+        Appodeal.show(this, Appodeal.BANNER_VIEW);
     }
 
     public void loadMEssages(){
 
-        chatList.clear();
-        chatArray.clear();
-        chatIDS.clear();
-        progerssIndicator.setVisibility(View.VISIBLE);
+        progressIndicator.setVisibility(View.VISIBLE);
 
         Cursor c = null;
         c=Config.db.query("message", null, null, null, null, null, "update_time DESC");
@@ -286,13 +270,12 @@ public class MessagesFragmant extends Fragment {
         RequestParams localRequestParams = new RequestParams();
         localRequestParams.put("last_update", upTime);
         localRequestParams.put("method", "messages_list");
-        NetManager.getInstance(getActivity()).post(localRequestParams, new AsyncHttpResponseHandler() {
+        NetManager.getInstance(this).post(localRequestParams, new AsyncHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                 try {
                     String str = new String(responseBody, "UTF-8");
                     System.out.println(str);
-
 
                     JSONObject messages = new JSONObject(str);
 
@@ -306,7 +289,7 @@ public class MessagesFragmant extends Fragment {
             @Override
             public void onFinish() {
                 try {
-                    progerssIndicator.setVisibility(View.GONE);
+                    progressIndicator.setVisibility(View.GONE);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -315,15 +298,15 @@ public class MessagesFragmant extends Fragment {
 
             @Override
             public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                progerssIndicator.setVisibility(View.GONE);
-                refreshLayout.setRefreshing(false);
+                super.onFinish();
+
             }
         });
     }
 
     private void loadUserList(){
 
-        progerssIndicator.setVisibility(View.VISIBLE);
+        progressIndicator.setVisibility(View.VISIBLE);
 
         //ArrayList allUsers = new ArrayList();
         Map<String, String> userIdsList = new HashMap<String, String>();
@@ -365,7 +348,7 @@ public class MessagesFragmant extends Fragment {
                 localRequestParams.put("ids[" + key + "]", value);
             }
 
-            NetManager.getInstance(getActivity()).post(localRequestParams, new AsyncHttpResponseHandler() {
+            NetManager.getInstance(this).post(localRequestParams, new AsyncHttpResponseHandler() {
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                     try {
@@ -382,15 +365,20 @@ public class MessagesFragmant extends Fragment {
                 }
 
                 @Override
-                public void onFinish() {super.onFinish();}
+                public void onFinish() {
+                    super.onFinish();
+                    progressIndicator.setVisibility(View.GONE);
+                }
 
                 @Override
                 public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                    new showChats().execute("");
+                    progressIndicator.setVisibility(View.GONE);
+                    refreshLayout.setRefreshing(false);
                 }
             });
         }else {
-            new showChats().execute("");
+            progressIndicator.setVisibility(View.GONE);
+            refreshLayout.setRefreshing(false);
         }
 
     }
@@ -448,9 +436,15 @@ public class MessagesFragmant extends Fragment {
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
 
-            new showChats().execute("");
-            //refreshLayout.setRefreshing(false);
-            //progerssIndicator.setVisibility(View.GONE);
+            messages.clear();
+            users.clear();
+
+            progressIndicator.setVisibility(View.GONE);
+
+            loadLocaleUser(from_id);
+            loadLocaleUser(to_id);
+            loadLocaleMessage();
+
         }
 
         @Override
@@ -505,29 +499,6 @@ public class MessagesFragmant extends Fragment {
             }
             return null;
         }
-    }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        public void onFragmentInteraction(Uri uri);
-    }
-
-    @Override
-    public void onResume(){
-        super.onResume();
-        Appodeal.hide(getActivity(), Appodeal.BANNER_VIEW);
-        Appodeal.setBannerViewId(R.id.appodealBannerView);
-        Appodeal.show(getActivity(), Appodeal.BANNER_VIEW);
     }
 
 }

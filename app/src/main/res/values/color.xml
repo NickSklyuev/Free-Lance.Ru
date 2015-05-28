@@ -5,4 +5,5 @@
     <item name="accent" type="color">#64DD17</item>
     <item name="text_primary" type="color">#ffffff</item>
     <item name="window_background" type="color">#ffffff</item>
+    <item name="red_color" type="color">#ff7c0d26</item>
 </resources>

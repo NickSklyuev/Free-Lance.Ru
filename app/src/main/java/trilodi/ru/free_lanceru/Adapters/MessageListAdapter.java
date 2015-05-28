@@ -1,6 +1,5 @@
 package trilodi.ru.free_lanceru.Adapters;
 
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.BitmapShader;
@@ -12,9 +11,11 @@ import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.Spanned;
+import android.text.style.AbsoluteSizeSpan;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
 import android.view.LayoutInflater;
@@ -25,44 +26,49 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import trilodi.ru.free_lanceru.Components.AvatarDrawable;
 import trilodi.ru.free_lanceru.FreeLanceApplication;
-import trilodi.ru.free_lanceru.Models.Chats;
+import trilodi.ru.free_lanceru.Models.Messages;
 import trilodi.ru.free_lanceru.Models.User;
 import trilodi.ru.free_lanceru.R;
-import trilodi.ru.free_lanceru.UI.MessageActivity;
 
 /**
  * Created by REstoreService on 24.05.15.
  */
-public class ChatsListAdapter extends RecyclerView.Adapter<ChatsListAdapter.ViewHolder> {
-    ArrayList<Chats> chats;
+public class MessageListAdapter extends RecyclerView.Adapter<MessageListAdapter.ViewHolder> {
+
+    ArrayList<Messages> messages = new ArrayList<Messages>();
+    Map<String, User> users = new HashMap<String, User>();
 
     Picasso mPicasso;
     private com.squareup.picasso.Target loadtarget;
-    ChatsListAdapter.ViewHolder h;
+    MessageListAdapter.ViewHolder h;
 
-    public ChatsListAdapter(ArrayList<Chats> chats){
-        this.chats = chats;
+    public MessageListAdapter(ArrayList<Messages> messages, Map<String, User> users){
+        this.messages = messages;
+        this.users = users;
     }
 
     @Override
-    public ChatsListAdapter.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-        View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.chats_list_ellement, viewGroup, false);
+    public MessageListAdapter.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
+        View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.message_list_ellement, viewGroup, false);
 
         ViewHolder vh = new ViewHolder(v);
         return vh;
     }
 
     @Override
-    public void onBindViewHolder(ChatsListAdapter.ViewHolder holder, int i) {
-        Chats chat = this.chats.get(i);
+    public void onBindViewHolder(MessageListAdapter.ViewHolder holder, int i) {
+        Messages chat = this.messages.get(i);
 
         h = holder;
 
-        User user = chat.user;
+        User user = users.get(chat.from_id);
 
         mPicasso = Picasso.with(holder.avatar.getContext());
 
@@ -91,61 +97,60 @@ public class ChatsListAdapter extends RecyclerView.Adapter<ChatsListAdapter.View
                 }
             };
         }
-
-        if(!user.avatar_url.equals("")){
-            mPicasso.load(user.avatar_url).into(loadtarget);
+        try {
+            if(!user.avatar_url.equals("")){
+                mPicasso.load(user.avatar_url).into(loadtarget);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
         }
+
 
         String username = "";
 
-        username = user.firstname;
-        if(!user.lastname.equals("")){
-            //userName.setText(project.user.firstname+" "+project.user.lastname);
-            username = user.firstname+" "+user.lastname;
-        }
-        if(!user.username.equals("")){
-            //userName.setText(project.user.firstname+" "+project.user.lastname+" ("+project.user.username+")");
-            username = user.firstname+" "+user.lastname+" ("+user.username+")";
-        }
-
-        holder.user_name.setText(username.trim());
-
-
-
-        if(chat.unreded>0){
-            String messages = "Сообщений " + chat.messages +" / ";
-            String new_messages = "Новых " + chat.unreded;
-            Spannable wordtoSpan = new SpannableString(messages+new_messages);
-            wordtoSpan.setSpan(new ForegroundColorSpan(FreeLanceApplication.getContext().getResources().getColor(R.color.primary)), messages.length(), (messages.length())+new_messages.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-            wordtoSpan.setSpan(new StyleSpan(Typeface.BOLD), messages.length(), (messages.length())+new_messages.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            holder.messages_count.setText(wordtoSpan);
-        }else{
-            holder.messages_count.setText("Сообщений " + chat.messages +" / Новых "+chat.unreded);
+        try {
+            username = user.firstname;
+            if(!user.lastname.equals("")){
+                //userName.setText(project.user.firstname+" "+project.user.lastname);
+                username = user.firstname+" "+user.lastname;
+            }
+            if(!user.username.equals("")){
+                //userName.setText(project.user.firstname+" "+project.user.lastname+" ("+project.user.username+")");
+                username = user.firstname+" "+user.lastname+" ("+user.username+")";
+            }
+        }catch (Exception e){
+            e.printStackTrace();
         }
 
 
-        holder.verImage.setVisibility(View.GONE);
-        holder.proImage.setVisibility(View.GONE);
 
-        if(user.pro == 1){
-            holder.proImage.setVisibility(View.VISIBLE);
-        }
 
-        if(user.verified == 1){
-            holder.verImage.setVisibility(View.VISIBLE);
-        }
+        SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy, HH:mm");
+        long timestamp = Long.parseLong(chat.create_time) * 1000;
+        java.util.Date netDate = (new java.util.Date(timestamp));
 
+        String uName = username.trim() +" ";
+        String cDate = sdf.format(netDate);
+        Spannable wordtoSpan = new SpannableString(uName+cDate);
+        wordtoSpan.setSpan(new ForegroundColorSpan(FreeLanceApplication.getContext().getResources().getColor(R.color.red_color)), uName.length(), (uName.length())+cDate.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        wordtoSpan.setSpan(new StyleSpan(Typeface.NORMAL), uName.length(), (uName.length())+cDate.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        wordtoSpan.setSpan(new AbsoluteSizeSpan(30), uName.length(), (uName.length())+cDate.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        //holder.messages_count.setText(wordtoSpan);
+        holder.user_name.setText(wordtoSpan);
+
+        holder.messages_count.setText(Html.fromHtml(chat.text).toString());
     }
 
     @Override
     public int getItemCount() {
-        return this.chats.size();
+        return this.messages.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{
         // each data item is just a string in this case
 
-        ImageView avatar, verImage, proImage;
+        ImageView avatar;
         TextView user_name, messages_count;
         CardView projectCard;
 
@@ -154,7 +159,7 @@ public class ChatsListAdapter extends RecyclerView.Adapter<ChatsListAdapter.View
 
             projectCard = (CardView) v.findViewById(R.id.card_view);
 
-            v.setOnClickListener(new View.OnClickListener() {
+            /*v.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
 
@@ -166,13 +171,11 @@ public class ChatsListAdapter extends RecyclerView.Adapter<ChatsListAdapter.View
                     chat.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     projectCard.getContext().startActivity(chat);
                 }
-            });
+            });*/
 
             avatar = (ImageView) projectCard.findViewById(R.id.avatarImage);
             user_name = (TextView) projectCard.findViewById(R.id.userName);
             messages_count  = (TextView) projectCard.findViewById(R.id.online_status);
-            verImage = (ImageView) projectCard.findViewById(R.id.verImage);
-            proImage = (ImageView) projectCard.findViewById(R.id.proImage);
 
         }
     }

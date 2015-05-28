@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,13 +13,14 @@ import android.widget.TextView;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
-import ru.wapstart.plus1.sdk.Plus1BannerAsker;
-import ru.wapstart.plus1.sdk.Plus1BannerView;
-import ru.wapstart.plus1.sdk.Plus1Request;
 import trilodi.ru.free_lanceru.Config;
 import trilodi.ru.free_lanceru.Models.Project;
 import trilodi.ru.free_lanceru.R;
 import trilodi.ru.free_lanceru.UI.ProjectActivity;
+
+//import ru.wapstart.plus1.sdk.Plus1BannerAsker;
+//import ru.wapstart.plus1.sdk.Plus1BannerView;
+//import ru.wapstart.plus1.sdk.Plus1Request;
 
 /**
  * Created by REstoreService on 24.05.15.
@@ -31,7 +31,7 @@ public class ProjectsListAdapter extends RecyclerView.Adapter<ProjectsListAdapte
     String[] dimension={"","/Час","/День","/Месяц","/Проект"};
     OnItemClickListener mItemClickListener;
 
-    Plus1BannerAsker mAsker;
+    //Plus1BannerAsker mAsker;
 
     public ProjectsListAdapter(ArrayList<Project> projects){
         this.projects = projects;
@@ -88,7 +88,7 @@ public class ProjectsListAdapter extends RecyclerView.Adapter<ProjectsListAdapte
             holder.only_verified.setVisibility(View.VISIBLE);
         }
 
-        holder.mBannerView.setVisibility(View.GONE);
+        /*holder.mBannerView.setVisibility(View.GONE);
 
         if(i%4==0&&i>0){
             holder.mBannerView.setVisibility(View.VISIBLE);
@@ -133,7 +133,7 @@ public class ProjectsListAdapter extends RecyclerView.Adapter<ProjectsListAdapte
             mAsker.refreshBanner();
         }else{
             holder.mBannerView.setVisibility(View.GONE);
-        }
+        }*/
 
 
     }
@@ -149,7 +149,7 @@ public class ProjectsListAdapter extends RecyclerView.Adapter<ProjectsListAdapte
         TextView title,price,descr, date;
         RelativeLayout only_pro, only_verified;
 
-        Plus1BannerView mBannerView;
+        //Plus1BannerView mBannerView;
         public ViewHolder(View v) {
             super(v);
 
@@ -174,7 +174,7 @@ public class ProjectsListAdapter extends RecyclerView.Adapter<ProjectsListAdapte
             only_pro = (RelativeLayout) projectCard.findViewById(R.id.onlypro);
             only_verified = (RelativeLayout) projectCard.findViewById(R.id.onlyverified);
 
-            mBannerView = (Plus1BannerView) v.findViewById(R.id.plus1BannerView);
+            //mBannerView = (Plus1BannerView) v.findViewById(R.id.plus1BannerView);
 
 
 

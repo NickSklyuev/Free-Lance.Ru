@@ -55,5 +55,6 @@
     <string name="title_activity_project">ProjectActivity</string>
     <string name="title_activity_responses">ResponsesActivity</string>
     <string name="title_activity_add_response">AddResponse</string>
+    <string name="title_activity_message">MessageActivity</string>
 
 </resources>

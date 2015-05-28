@@ -29,6 +29,7 @@ import trilodi.ru.free_lanceru.Config;
 import trilodi.ru.free_lanceru.Models.Messages;
 import trilodi.ru.free_lanceru.Models.Project;
 import trilodi.ru.free_lanceru.Models.User;
+import trilodi.ru.free_lanceru.Models.UserReview;
 import trilodi.ru.free_lanceru.Network.NetManager;
 import trilodi.ru.free_lanceru.R;
 
@@ -37,6 +38,8 @@ public class SplashScreenActivity extends ActionBarActivity {
     TextView progressText;
 
     String upTime="0";
+    Map<String, String> userIdsList = new HashMap<String, String>();
+    Map<String, String> userIdsListNotSet = new HashMap<String, String>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,7 +97,7 @@ public class SplashScreenActivity extends ActionBarActivity {
                         localEditor2.putBoolean("first_launch_not_login", false);
                         localEditor2.commit();
 
-                        loadProjects();
+                        userGet();
 
                     }else{
                         Intent mainActivity = new Intent(SplashScreenActivity.this, LoginActivity.class);
@@ -130,6 +133,68 @@ public class SplashScreenActivity extends ActionBarActivity {
             }
         });
 
+    }
+
+    public void userGet(){
+
+        RequestParams localRequestParams = new RequestParams();
+        localRequestParams.put("id", Config.myUser.id);
+        localRequestParams.put("method", "users_get");
+        NetManager.getInstance(this).post(localRequestParams, new AsyncHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+
+                try {
+                    String str = new String(responseBody, "UTF-8");
+                    System.out.println(str);
+
+                    JSONObject resp = new JSONObject(str);
+                    if (resp.get("error").toString().equals("0")) {
+                        //Config.myUser = new User(resp.getJSONObject("data").getJSONObject("user"));
+
+                        Config.myUser.rating = resp.getJSONObject("data").getJSONObject("user").getInt("rating");
+
+                        for(int i=0; i<resp.getJSONObject("data").getJSONObject("user").getJSONArray("reviews").length();i++){
+                            JSONObject review = resp.getJSONObject("data").getJSONObject("user").getJSONArray("reviews").getJSONObject(i);
+                            Config.myUser.reviews.add(new UserReview(review));
+                        }
+
+                        loadProjects();
+
+                    }else{
+                        Intent mainActivity = new Intent(SplashScreenActivity.this, LoginActivity.class);
+                        mainActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(mainActivity);
+                        overridePendingTransition(R.anim.fadein, R.anim.fadeout);
+                        SplashScreenActivity.this.finish();
+                    }
+
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Intent mainActivity = new Intent(SplashScreenActivity.this, LoginActivity.class);
+                    mainActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(mainActivity);
+                    overridePendingTransition(R.anim.fadein, R.anim.fadeout);
+                    SplashScreenActivity.this.finish();
+                }
+
+            }
+
+            @Override
+            public void onFinish() {
+                super.onFinish();
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                Intent mainActivity = new Intent(SplashScreenActivity.this, LoginActivity.class);
+                mainActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(mainActivity);
+                overridePendingTransition(R.anim.fadein, R.anim.fadeout);
+                SplashScreenActivity.this.finish();
+            }
+        });
     }
 
     private void loadProjects()
@@ -278,84 +343,11 @@ public class SplashScreenActivity extends ActionBarActivity {
 
     private void loadUserList(){
 
+        userIdsList.clear();
+        userIdsListNotSet.clear();
+
         progressText.setText("Загрузка списка чатов...");
-
-        //ArrayList allUsers = new ArrayList();
-        Map<String, String> userIdsList = new HashMap<String, String>();
-        Map<String, String> userIdsListNotSet = new HashMap<String, String>();
-        Cursor cc =Config.db.query("user", null, null, null, null, null, null);
-        if (cc.moveToFirst()) {
-            int uID = cc.getColumnIndex("id");
-            do{
-                //allUsers.add(cc.getString(uID));
-                userIdsList.put(cc.getString(uID),cc.getString(uID));
-            }while(cc.moveToNext());
-        }
-        cc.close();
-
-        //ArrayList mUList= new ArrayList();
-        Cursor c =Config.db.query("message", null, null, null, null, null, "update_time DESC");
-        if (c.moveToFirst()) {
-            int uID = c.getColumnIndex("from_id");
-            int toID = c.getColumnIndex("to_id");
-            do{
-                if(!userIdsList.containsKey(c.getString(toID))){
-                    userIdsListNotSet.put(c.getString(toID),c.getString(toID));
-                }
-                if(!userIdsList.containsKey(c.getString(uID))){
-                    userIdsListNotSet.put(c.getString(uID),c.getString(uID));
-                }
-            }while(c.moveToNext());
-        }
-        c.close();
-
-
-        if(userIdsListNotSet.size()>0) {
-            RequestParams localRequestParams = new RequestParams();
-            localRequestParams.put("method", "users_list");
-
-            for(Map.Entry<String, String> entry : userIdsListNotSet.entrySet()) {
-                String key = entry.getKey();
-                String value = entry.getValue();
-                localRequestParams.put("ids[" + key + "]", value);
-            }
-
-            NetManager.getInstance(this).post(localRequestParams, new AsyncHttpResponseHandler() {
-                @Override
-                public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-                    try {
-                        String str = new String(responseBody, "UTF-8");
-                        System.out.println(str);
-
-                        JSONObject userData = new JSONObject(str);
-
-                        new updateUsers().execute(userData.toString());
-
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-
-                @Override
-                public void onFinish() {super.onFinish();}
-
-                @Override
-                public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                    Intent mainActivity = new Intent(SplashScreenActivity.this, MainActivity.class);
-                    mainActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(mainActivity);
-                    overridePendingTransition(R.anim.fadein, R.anim.fadeout);
-                    SplashScreenActivity.this.finish();
-                }
-            });
-        }else {
-            Intent mainActivity = new Intent(SplashScreenActivity.this, MainActivity.class);
-            mainActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(mainActivity);
-            overridePendingTransition(R.anim.fadein, R.anim.fadeout);
-            SplashScreenActivity.this.finish();
-        }
-
+        new preLoaderMessadge().execute("");
     }
 
     public class updateMEssages extends AsyncTask<String, String, String> {
@@ -468,6 +460,93 @@ public class SplashScreenActivity extends ActionBarActivity {
             } catch (Exception localException) {
                 localException.printStackTrace();
             }
+            return null;
+        }
+    }
+
+    public class preLoaderMessadge extends AsyncTask<String, String, String> {
+
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+
+            if(userIdsListNotSet.size()>0) {
+                RequestParams localRequestParams = new RequestParams();
+                localRequestParams.put("method", "users_list");
+
+                for(Map.Entry<String, String> entry : userIdsListNotSet.entrySet()) {
+                    String key = entry.getKey();
+                    String value = entry.getValue();
+                    localRequestParams.put("ids[" + key + "]", value);
+                }
+
+                NetManager.getInstance(SplashScreenActivity.this).post(localRequestParams, new AsyncHttpResponseHandler() {
+                    @Override
+                    public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                        try {
+                            String str = new String(responseBody, "UTF-8");
+                            System.out.println(str);
+
+                            JSONObject userData = new JSONObject(str);
+
+                            new updateUsers().execute(userData.toString());
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    @Override
+                    public void onFinish() {super.onFinish();}
+
+                    @Override
+                    public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                        Intent mainActivity = new Intent(SplashScreenActivity.this, MainActivity.class);
+                        mainActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(mainActivity);
+                        overridePendingTransition(R.anim.fadein, R.anim.fadeout);
+                        SplashScreenActivity.this.finish();
+                    }
+                });
+            }else {
+                Intent mainActivity = new Intent(SplashScreenActivity.this, MainActivity.class);
+                mainActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(mainActivity);
+                overridePendingTransition(R.anim.fadein, R.anim.fadeout);
+                SplashScreenActivity.this.finish();
+            }
+
+        }
+
+        @Override
+        protected String doInBackground(String...paramArrayOfString) {
+            //ArrayList allUsers = new ArrayList();
+
+            Cursor cc =Config.db.query("user", null, null, null, null, null, null);
+            if (cc.moveToFirst()) {
+                int uID = cc.getColumnIndex("id");
+                do{
+                    //allUsers.add(cc.getString(uID));
+                    userIdsList.put(cc.getString(uID),cc.getString(uID));
+                }while(cc.moveToNext());
+            }
+            cc.close();
+
+            //ArrayList mUList= new ArrayList();
+            Cursor c =Config.db.query("message", null, null, null, null, null, "update_time DESC");
+            if (c.moveToFirst()) {
+                int uID = c.getColumnIndex("from_id");
+                int toID = c.getColumnIndex("to_id");
+                do{
+                    if(!userIdsList.containsKey(c.getString(toID))){
+                        userIdsListNotSet.put(c.getString(toID),c.getString(toID));
+                    }
+                    if(!userIdsList.containsKey(c.getString(uID))){
+                        userIdsListNotSet.put(c.getString(uID),c.getString(uID));
+                    }
+                }while(c.moveToNext());
+            }
+            c.close();
             return null;
         }
     }
@@ -604,4 +683,5 @@ public class SplashScreenActivity extends ActionBarActivity {
             return null;
         }
     }
+
 }

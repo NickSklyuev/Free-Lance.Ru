@@ -35,43 +35,63 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
-                    <RelativeLayout
+                    <ImageView
+                        android:layout_width="70dp"
+                        android:layout_height="70dp"
+                        android:id="@+id/avatarImage"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginBottom="16dp"
+                        android:layout_weight="0" />
+
+                    <LinearLayout
+                        android:orientation="vertical"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent">
 
-                        <ImageView
-                            android:layout_width="70dp"
-                            android:layout_height="70dp"
-                            android:id="@+id/avatarImage"
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Рейтинг:"
+                            android:id="@+id/ratingText"
+                            android:layout_weight="0"
+                            android:layout_marginTop="13dp"
                             android:layout_marginLeft="16dp"
-                            android:layout_marginTop="16dp"
-                            android:layout_marginBottom="16dp"
-                            android:layout_weight="0" />
+                            android:textColor="#ffffff"
+                            android:textSize="18dp"
+                            android:typeface="sans" />
 
-                        <ImageView
-                            android:layout_width="100dp"
-                            android:layout_height="99dp"
-                            android:id="@+id/proImage"
-                            android:src="@drawable/pro"
-                            android:layout_gravity="right|top"
-                            android:layout_alignParentTop="true"
-                            android:layout_alignParentRight="true"
-                            android:layout_alignParentEnd="true" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Отзывов:"
+                            android:id="@+id/reviewsCount"
+                            android:layout_weight="0"
+                            android:textSize="18dp"
+                            android:textColor="#ffffff"
+                            android:layout_marginLeft="16dp" />
 
-                        <ImageView
-                            android:layout_width="50dp"
-                            android:layout_height="50dp"
-                            android:id="@+id/verifiedImage"
-                            android:src="@drawable/not_verified"
-                            android:layout_centerVertical="true"
-                            android:layout_toRightOf="@+id/avatarImage"
-                            android:layout_toEndOf="@+id/avatarImage"
-                            android:layout_alignParentLeft="false"
-                            android:layout_alignParentRight="false"
-                            android:layout_alignWithParentIfMissing="false"
-                            android:layout_marginLeft="90dp" />
+                        <LinearLayout
+                            android:orientation="horizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="16dp">
 
-                    </RelativeLayout>
+                            <ImageView
+                                android:layout_width="40dp"
+                                android:layout_height="25dp"
+                                android:id="@+id/proImage"
+                                android:src="@drawable/pro_list"
+                                android:layout_marginRight="10dp" />
+
+                            <ImageView
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:id="@+id/verImage"
+                                android:src="@drawable/verified_list"
+                                android:layout_marginTop="2dp" />
+                        </LinearLayout>
+                    </LinearLayout>
                 </LinearLayout>
 
                 <LinearLayout

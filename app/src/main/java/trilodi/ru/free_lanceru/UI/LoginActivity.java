@@ -9,8 +9,6 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
@@ -27,6 +25,7 @@ import org.json.JSONObject;
 
 import trilodi.ru.free_lanceru.Config;
 import trilodi.ru.free_lanceru.Models.User;
+import trilodi.ru.free_lanceru.Models.UserReview;
 import trilodi.ru.free_lanceru.Network.NetManager;
 import trilodi.ru.free_lanceru.R;
 
@@ -154,21 +153,7 @@ public class LoginActivity extends ActionBarActivity {
                         localEditor2.putString("id", Config.myUser.id);
                         localEditor2.commit();
 
-                        if(localEditor.getBoolean("first_launch_not_login", true)){
-                            Intent mainActivity = new Intent(LoginActivity.this, SplashScreenActivity.class);
-                            mainActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            startActivity(mainActivity);
-                            finish();
-                        }else{
-                            Intent mainActivity = new Intent(LoginActivity.this, MainActivity.class);
-                            mainActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            startActivity(mainActivity);
-                            finish();
-                        }
-
-
-
-
+                        userGet();
                     }
                     if (response.get("error_text").toString().equals("ERROR_EMPTY_USERNAME")) {
                         errorText.setText(getResources().getString(R.string.ERROR_EMPTY_USERNAME));
@@ -216,25 +201,78 @@ public class LoginActivity extends ActionBarActivity {
         });
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_login, menu);
-        return true;
-    }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+    public void userGet(){
+        dialog.show();
+        RequestParams localRequestParams = new RequestParams();
+        localRequestParams.put("id", Config.myUser.id);
+        localRequestParams.put("method", "users_get");
+        NetManager.getInstance(this).post(localRequestParams, new AsyncHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
+                try {
+                    String str = new String(responseBody, "UTF-8");
+                    System.out.println(str);
 
-        return super.onOptionsItemSelected(item);
+                    JSONObject resp = new JSONObject(str);
+                    if (resp.get("error").toString().equals("0")) {
+                        Config.myUser.rating = resp.getJSONObject("data").getJSONObject("user").getInt("rating");
+
+                        for(int i=0; i<resp.getJSONObject("data").getJSONObject("user").getJSONArray("reviews").length();i++){
+                            JSONObject review = resp.getJSONObject("data").getJSONObject("user").getJSONArray("reviews").getJSONObject(i);
+                            Config.myUser.reviews.add(new UserReview(review));
+                        }
+                        if(localEditor.getBoolean("first_launch_not_login", true)){
+                            Intent mainActivity = new Intent(LoginActivity.this, SplashScreenActivity.class);
+                            mainActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(mainActivity);
+                            finish();
+                        }else{
+                            Intent mainActivity = new Intent(LoginActivity.this, MainActivity.class);
+                            mainActivity.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(mainActivity);
+                            finish();
+                        }
+                    }
+
+                    if (resp.get("error_text").toString().equals("ERROR_EMPTY_USERNAME")) {
+                        errorText.setText(getResources().getString(R.string.ERROR_EMPTY_USERNAME));
+                        errorText.setVisibility(View.VISIBLE);
+                    }
+                    if (resp.get("error_text").toString().equals("ERROR_INVALID_PASSWORD")) {
+
+                        errorText.setText(getResources().getString(R.string.ERROR_INVALID_PASSWORD));
+                        errorText.setVisibility(View.VISIBLE);
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    errorText.setText(getResources().getString(R.string.ERROR_AUTH_EXCEPTION));
+                    errorText.setVisibility(View.VISIBLE);
+                }
+
+            }
+
+            @Override
+            public void onFinish() {
+                dialog.dismiss();
+                super.onFinish();
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                try {
+                    String str = new String(responseBody, "UTF-8");
+                    errorText.setText(str);
+                    errorText.setVisibility(View.VISIBLE);
+                } catch (Exception e) {
+                    // ERROR_TEXT.setText("Ошибка авторизации. Проверьте данные и повторите попытку");
+                    errorText.setText(getResources().getString(R.string.ERROR_AUTH_EXCEPTION));
+                    errorText.setVisibility(View.VISIBLE);
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 }

@@ -225,16 +225,16 @@ public class ProjectActivity extends ActionBarActivity {
                             myId = i;
                         }
 
-                        if(resp.select>0){
+                        if(resp.select==3){
                             select = true;
                             break;
                         }
                     }
                     responsesText.setText("ответов "+project.responses.size());
-                    /*if(select){
+                    if(select){
                         responsesText.setText("исполнитель определен");
                         responsesText.setTextColor(Color.YELLOW);
-                    }*/
+                    }
 
                     responsesText.setOnClickListener(new View.OnClickListener() {
                         @Override
