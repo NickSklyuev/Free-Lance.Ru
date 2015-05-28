@@ -39,6 +39,11 @@ public class Config {
 
     public static String appKey = "b1f815106266f11a9368fd47e8b666bdb1fae1913354f864";
 
+    static {
+        dbHelper=new DBOpenHelper(FreeLanceApplication.getContext());
+        db = dbHelper.getWritableDatabase();
+    }
+
 
     public static long getTimestampFromDate(java.util.Date paramDate)
     {

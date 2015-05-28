@@ -4,12 +4,28 @@ import android.app.Activity;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.gc.materialdesign.views.ProgressBarCircularIndeterminate;
+import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
+
+import org.apache.http.Header;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+
+import trilodi.ru.free_lanceru.Adapters.ProjectsListAdapter;
+import trilodi.ru.free_lanceru.Models.FavoriteUser;
+import trilodi.ru.free_lanceru.Network.NetManager;
 import trilodi.ru.free_lanceru.R;
 
 /**
@@ -26,6 +42,16 @@ public class FavoritesFragment extends Fragment {
 
 
     private OnFragmentInteractionListener mListener;
+
+    private RecyclerView favoritesRecyclerView;
+    private ProjectsListAdapter mAdapter;
+    private RecyclerView.LayoutManager mLayoutManager;
+
+    private SwipeRefreshLayout refreshLayout;
+
+    ProgressBarCircularIndeterminate loadProgressing;
+
+    ArrayList<FavoriteUser> favorites = new ArrayList<FavoriteUser>();
 
     /**
      * Use this factory method to create a new instance of
@@ -62,7 +88,58 @@ public class FavoritesFragment extends Fragment {
                 MainActivity.drawerLayout.openDrawer(Gravity.LEFT);
             }
         });
+
+        loadProgressing  =(ProgressBarCircularIndeterminate) v.findViewById(R.id.dialogProgress);
+        loadProgressing.setVisibility(View.GONE);
+
+        favoritesRecyclerView = (RecyclerView) v.findViewById(R.id.projectList);
+        favoritesRecyclerView.setHasFixedSize(true);
+        mLayoutManager = new LinearLayoutManager(getActivity());
+        favoritesRecyclerView.setLayoutManager(mLayoutManager);
+        refreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipe_layout);
+
+        loadFavorites();
+
         return v;
+    }
+
+
+    public void loadFavorites(){
+
+        loadProgressing.setVisibility(View.VISIBLE);
+
+        RequestParams localRequestParams = new RequestParams();
+        localRequestParams.put("method", "users_favorites_list");
+        NetManager.getInstance(getActivity()).post(localRequestParams, new AsyncHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                try {
+                    String str = new String(responseBody, "UTF-8");
+                    System.out.println(str);
+
+                    JSONObject localJSONObject = new JSONObject(str);
+                    JSONArray localJSONArray = localJSONObject.getJSONObject("data").getJSONArray("favorites_list");
+
+                    for(int i=0; i<localJSONArray.length(); i++){
+                        favorites.add(new FavoriteUser(localJSONArray.getJSONObject(i)));
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFinish() {
+                loadProgressing.setVisibility(View.GONE);
+                super.onFinish();
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                loadProgressing.setVisibility(View.GONE);
+            }
+        });
     }
 
     // TODO: Rename method, update argument and hook method into UI event
