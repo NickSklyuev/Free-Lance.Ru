@@ -250,8 +250,8 @@ public class MessageActivity extends ActionBarActivity {
     public void onResume(){
         super.onResume();
         Appodeal.hide(this, Appodeal.BANNER_VIEW);
-        Appodeal.setBannerViewId(R.id.appodealBannerView);
-        Appodeal.show(this, Appodeal.BANNER_VIEW);
+        //Appodeal.setBannerViewId(R.id.appodealBannerView);
+        //Appodeal.show(this, Appodeal.BANNER_VIEW);
     }
 
     public void loadMEssages(){
