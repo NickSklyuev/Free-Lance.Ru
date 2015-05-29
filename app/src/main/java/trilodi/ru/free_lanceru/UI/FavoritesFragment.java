@@ -1,6 +1,7 @@
 package trilodi.ru.free_lanceru.UI;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -118,6 +119,16 @@ public class FavoritesFragment extends Fragment {
                 try {
                     String str = new String(responseBody, "UTF-8");
                     System.out.println(str);
+
+
+                    JSONObject r = new JSONObject(str);
+
+                    if(!r.get("error").toString().equals("0")){
+                        Intent splash = new Intent(getActivity(),SplashScreenActivity.class);
+                        splash.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(splash);
+                        getActivity().finish();
+                    }
 
                     JSONObject localJSONObject = new JSONObject(str);
                     JSONArray localJSONArray = localJSONObject.getJSONObject("data").getJSONArray("favorites_list");

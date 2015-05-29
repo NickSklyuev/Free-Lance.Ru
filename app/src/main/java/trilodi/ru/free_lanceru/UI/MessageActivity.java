@@ -1,6 +1,7 @@
 package trilodi.ru.free_lanceru.UI;
 
 import android.content.ContentValues;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -134,6 +135,14 @@ public class MessageActivity extends ActionBarActivity {
                         System.out.println(str);
 
                         JSONObject localJSONObject = new JSONObject(str);
+
+                        if(!localJSONObject.get("error").toString().equals("0")){
+                            Intent splash = new Intent(MessageActivity.this,SplashScreenActivity.class);
+                            splash.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(splash);
+                            finish();
+                        }
+
                         JSONObject mess = localJSONObject.getJSONObject("data").getJSONObject("message");
 
                         ContentValues cv = new ContentValues();

@@ -187,8 +187,8 @@ public class ProfileFragment extends Fragment {
         TextView dialogTitle = (TextView) loadingView.findViewById(R.id.dialogtitle);
         TextView dialogDescription = (TextView) loadingView.findViewById(R.id.dialogDescription);
 
-        dialogTitle.setText(getResources().getString(R.string.AUTH_DIALOG_TITLE));
-        dialogDescription.setText(getResources().getString(R.string.AUTH_DIALOG_TEXT));
+        dialogTitle.setText(getResources().getString(R.string.PROFILE_DIALOG_TITLE));
+        dialogDescription.setText(getResources().getString(R.string.PROFILE_DIALOG_TEXT));
 
         dialog = new AlertDialog.Builder(getActivity()).setView(loadingView).setCancelable(false).create();
 
@@ -354,6 +354,9 @@ public class ProfileFragment extends Fragment {
                         renderUserData();
 
                     }else{
+                        Intent splash = new Intent(getActivity(),SplashScreenActivity.class);
+                        splash.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(splash);
                         getActivity().finish();
                     }
 

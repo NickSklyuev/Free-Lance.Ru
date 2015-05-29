@@ -168,6 +168,14 @@ public class ProjectActivity extends ActionBarActivity {
                     String str = new String(responseBody, "UTF-8");
                     System.out.println(str);
                     JSONObject localJSONObject1 = new JSONObject(str);
+
+                    if(!localJSONObject1.get("error").toString().equals("0")){
+                        Intent splash = new Intent(ProjectActivity.this,SplashScreenActivity.class);
+                        splash.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(splash);
+                        finish();
+                    }
+
                     JSONObject localJSONObject2 = localJSONObject1.getJSONObject("data").getJSONObject("item");
 
                     project = new Project(localJSONObject2);

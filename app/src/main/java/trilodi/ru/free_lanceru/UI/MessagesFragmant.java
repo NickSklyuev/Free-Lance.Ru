@@ -2,6 +2,7 @@ package trilodi.ru.free_lanceru.UI;
 
 import android.app.Activity;
 import android.content.ContentValues;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -184,7 +185,7 @@ public class MessagesFragmant extends Fragment {
 
         @Override
         protected String doInBackground(String...paramArrayOfString) {
-            Cursor c =Config.db.query("message", null, null, null, null, null, "create_time DESC");
+            Cursor c =Config.db.query("message", null, null, null, null, null, "create_time DESC LIMIT 500");
             if (c.moveToFirst()) {
                 int uID = c.getColumnIndex("from_id");
                 int toID = c.getColumnIndex("to_id");
@@ -295,6 +296,13 @@ public class MessagesFragmant extends Fragment {
 
 
                     JSONObject messages = new JSONObject(str);
+
+                    if(!messages.get("error").toString().equals("0")){
+                        Intent splash = new Intent(getActivity(),SplashScreenActivity.class);
+                        splash.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(splash);
+                        getActivity().finish();
+                    }
 
                     new updateMEssages().execute(messages.toString());
 
