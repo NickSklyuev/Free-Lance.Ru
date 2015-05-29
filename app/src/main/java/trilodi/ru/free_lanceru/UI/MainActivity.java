@@ -59,7 +59,7 @@ public class MainActivity extends ActionBarActivity
                 fragmentManager.beginTransaction().replace(R.id.container, FavoritesFragment.newInstance()).commit();
                 break;
             case 3:
-                fragmentManager.beginTransaction().replace(R.id.container, ProfileFragment.newInstance()).commit();
+                fragmentManager.beginTransaction().replace(R.id.container, ProfileActivityFragment.newInstance()).commit();
                 break;
             default:
                 fragmentManager.beginTransaction().replace(R.id.container, ProjectsListFragment.newInstance()).commit();

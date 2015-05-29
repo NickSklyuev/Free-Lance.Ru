@@ -125,7 +125,12 @@ public class NavigationDrawerFragment extends Fragment {
         reviewsCount = (TextView) mainDrawerLayout.findViewById(R.id.reviewsCount);
         TextView ratingText = (TextView) mainDrawerLayout.findViewById(R.id.ratingText);
 
-        ratingText.setText("Рейтинг: "+Config.myUser.rating);
+        try{
+            ratingText.setText("Рейтинг: "+Config.myUser.rating);
+        }catch(Exception e){
+            ratingText.setText("");
+        }
+
 
         userNames.setText(Config.myUser.firstname);
         if(!Config.myUser.lastname.equals("")){

@@ -30,7 +30,8 @@
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginLeft="15dp">
+                android:layout_marginLeft="15dp"
+                android:id="@+id/profileData">
 
                 <ImageView
                     android:layout_width="36dp"

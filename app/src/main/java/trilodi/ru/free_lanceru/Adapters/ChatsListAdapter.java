@@ -77,7 +77,7 @@ public class ChatsListAdapter extends RecyclerView.Adapter<ChatsListAdapter.View
                     // do something with the Bitmap
 
                     h.avatar.setImageBitmap(roundImage(bitmap));
-                    h.avatar.requestLayout();
+                    h.avatar.refreshDrawableState();
                 }
 
                 @Override

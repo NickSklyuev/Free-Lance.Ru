@@ -125,17 +125,16 @@ public class MessageActivity extends ActionBarActivity {
 
         messageText.setText("");
 
-        NetManager.getInstance(this).post(localRequestParams, new AsyncHttpResponseHandler()
-        {
+        NetManager.getInstance(this).post(localRequestParams, new AsyncHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-                try{
-                    try{
+                try {
+                    try {
                         String str = new String(responseBody, "UTF-8");
                         System.out.println(str);
 
                         JSONObject localJSONObject = new JSONObject(str);
-                        JSONObject mess=localJSONObject.getJSONObject("data").getJSONObject("message");
+                        JSONObject mess = localJSONObject.getJSONObject("data").getJSONObject("message");
 
                         ContentValues cv = new ContentValues();
                         cv.put("create_time", mess.get("create_time").toString());
@@ -162,21 +161,21 @@ public class MessageActivity extends ActionBarActivity {
                         loadLocaleUser(to_id);
                         loadLocaleMessage();
 
-                        mAdapter = new MessageListAdapter(messages,users);
+                        mAdapter = new MessageListAdapter(messages, users);
                         messagesRecyclerView.setItemAnimator(new DefaultItemAnimator());
                         messagesRecyclerView.setAdapter(mAdapter);
                         refreshLayout.setRefreshing(false);
 
-                    }catch(Exception e){
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
-                }catch(Exception e){
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
 
             @Override
-            public void onFinish(){
+            public void onFinish() {
                 super.onFinish();
             }
 
@@ -216,6 +215,9 @@ public class MessageActivity extends ActionBarActivity {
         c.close();
         progressIndicator.setVisibility(View.GONE);
         refreshLayout.setRefreshing(false);
+        if(messages.size()==0){
+            Appodeal.hide(this, Appodeal.BANNER_VIEW);
+        }
     }
 
     private void loadLocaleUser(String user_id){

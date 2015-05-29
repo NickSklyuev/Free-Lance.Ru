@@ -32,6 +32,7 @@ public class User {
     public int create_time;
     public int update_time;
     public Map<String, String> avatar = new HashMap<String, String>();
+    public Map<String, ArrayList<String>> contatcs = new HashMap<String, ArrayList<String>>();
     public int age;
     public int online;
     public String avatar_url = "";

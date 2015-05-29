@@ -14,6 +14,9 @@
     <string name="AUTH_DIALOG_TITLE">Авторизация</string>
     <string name="AUTH_DIALOG_TEXT">Пожалуйтса подождите....\nИдет авторизация</string>
 
+    <string name="PROFILE_DIALOG_TITLE">Профиль пользователя</string>
+    <string name="PROFILE_DIALOG_TEXT">Пожалуйтса подождите....\nИдет загрузка профиля пользователя</string>
+
     <string name="LOAD_PROJECT_DIALOG_TITLE">Загрузка проекта</string>
     <string name="LOAD_PROJECT_DIALOG_TEXT">Пожалуйтса подождите....\nИдет загрузка проекта</string>
 
@@ -26,9 +29,10 @@
 
 
     <string name="PROJECTS_TITLE">Проекты</string>
-    <string name="MESSAGES_TITLE">Сообения</string>
+    <string name="MESSAGES_TITLE">Сообщения</string>
     <string name="FAVORITES_TITLE">Избранное</string>
     <string name="PROFILE_TITLE">Мой профиль</string>
+    <string name="ALL_PROFILE_TITLE">Профиль пользователя</string>
 
 
 
@@ -56,5 +60,6 @@
     <string name="title_activity_responses">ResponsesActivity</string>
     <string name="title_activity_add_response">AddResponse</string>
     <string name="title_activity_message">MessageActivity</string>
+    <string name="title_activity_profile">ProfileActivity</string>
 
 </resources>

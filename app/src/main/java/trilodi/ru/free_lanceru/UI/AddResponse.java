@@ -14,6 +14,7 @@ import android.widget.RadioButton;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import com.appodeal.ads.Appodeal;
 import com.gc.materialdesign.views.ProgressBarCircularIndeterminate;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
@@ -348,6 +349,12 @@ public class AddResponse extends ActionBarActivity {
                 //new MessagesDialog(ProjectActivity.this, "Проект", "Во время ответа на проект произошла ошибка соединения.\nПроверьте соединение и повторите попытку.").show();
             }
         });
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        Appodeal.hide(this, Appodeal.BANNER_VIEW);
     }
 
 }

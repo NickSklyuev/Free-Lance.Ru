@@ -8,7 +8,7 @@ import java.util.Map;
 /**
  * Created by REstoreService on 28.05.15.
  */
-public class FavoriteUser {
+public class FavoriteUser extends User{
     public int pro = 0;
     public String lastname = "";
     public int status =1;

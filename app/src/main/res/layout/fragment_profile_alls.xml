@@ -1,4 +1,5 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:materialdesign="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent" tools:context="trilodi.ru.free_lanceru.UI.ProfileFragment">
 
@@ -22,13 +23,13 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/MenuButton"
-                android:src="@drawable/ic_menu" />
+                android:id="@+id/backButton"
+                android:src="@drawable/ic_back" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/PROFILE_TITLE"
+                android:text="@string/ALL_PROFILE_TITLE"
                 android:id="@+id/projects_title"
                 android:textColor="#fff"
                 android:textSize="20dp"
@@ -240,9 +241,24 @@
                         android:textIsSelectable="true" />
                 </LinearLayout>
 
+
+
             </LinearLayout>
         </ScrollView>
 
+
+
     </LinearLayout>
 
-</FrameLayout>
+    <com.gc.materialdesign.views.ButtonFloat
+        android:id="@+id/buttonFloat"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginRight="24dp"
+        android:background="@color/primary"
+        materialdesign:animate="true"
+        materialdesign:iconDrawable="@drawable/ic_action_edit" />
+
+</RelativeLayout>

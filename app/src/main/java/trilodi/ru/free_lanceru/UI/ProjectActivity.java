@@ -18,10 +18,12 @@ import android.text.Html;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.appodeal.ads.Appodeal;
 import com.gc.materialdesign.views.ProgressBarCircularIndeterminate;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
@@ -91,6 +93,18 @@ public class ProjectActivity extends ActionBarActivity {
         descrText = (TextView) findViewById(R.id.descrText);
         budgetText = (TextView) findViewById(R.id.budgetText);
         responsesText = (TextView) findViewById(R.id.responsesText);
+
+        LinearLayout profileData = (LinearLayout) findViewById(R.id.profileData);
+        profileData.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ProfileFragment.userId = project.user.id;
+
+                Intent userProfile = new Intent(v.getContext(), ProfileActivity.class);
+                userProfile.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                v.getContext().startActivity(userProfile);
+            }
+        });
 
         attachesList = (ListView) findViewById(R.id.attachesList);
 
@@ -296,5 +310,11 @@ public class ProjectActivity extends ActionBarActivity {
         canvas.drawRoundRect((new RectF(0.0f, 0.0f, bitmap.getWidth(), bitmap.getHeight())), 80, 80, paint);
 
         return bitmapRounded;
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        Appodeal.hide(this, Appodeal.BANNER_VIEW);
     }
 }

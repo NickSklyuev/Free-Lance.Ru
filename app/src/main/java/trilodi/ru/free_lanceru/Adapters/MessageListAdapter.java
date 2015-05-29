@@ -1,5 +1,6 @@
 package trilodi.ru.free_lanceru.Adapters;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.BitmapShader;
@@ -36,6 +37,8 @@ import trilodi.ru.free_lanceru.FreeLanceApplication;
 import trilodi.ru.free_lanceru.Models.Messages;
 import trilodi.ru.free_lanceru.Models.User;
 import trilodi.ru.free_lanceru.R;
+import trilodi.ru.free_lanceru.UI.ProfileActivity;
+import trilodi.ru.free_lanceru.UI.ProfileFragment;
 
 /**
  * Created by REstoreService on 24.05.15.
@@ -176,6 +179,17 @@ public class MessageListAdapter extends RecyclerView.Adapter<MessageListAdapter.
             avatar = (ImageView) projectCard.findViewById(R.id.avatarImage);
             user_name = (TextView) projectCard.findViewById(R.id.userName);
             messages_count  = (TextView) projectCard.findViewById(R.id.online_status);
+
+            avatar.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ProfileFragment.userId = messages.get(getPosition()).from_id;
+
+                    Intent userProfile = new Intent(v.getContext(), ProfileActivity.class);
+                    userProfile.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    v.getContext().startActivity(userProfile);
+                }
+            });
 
         }
     }

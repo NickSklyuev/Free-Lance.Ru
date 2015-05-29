@@ -15,6 +15,7 @@ import com.loopj.android.http.RequestParams;
 
 import org.apache.http.Header;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -22,6 +23,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import trilodi.ru.free_lanceru.Components.DBOpenHelper;
@@ -157,6 +159,28 @@ public class SplashScreenActivity extends ActionBarActivity {
                         for(int i=0; i<resp.getJSONObject("data").getJSONObject("user").getJSONArray("reviews").length();i++){
                             JSONObject review = resp.getJSONObject("data").getJSONObject("user").getJSONArray("reviews").getJSONObject(i);
                             Config.myUser.reviews.add(new UserReview(review));
+                        }
+
+                        JSONObject contactsObj=resp.getJSONObject("data").getJSONObject("user").getJSONObject("contacts");
+                        String contactsData="";
+                        Iterator<String> iter = contactsObj.keys();
+                        while (iter.hasNext()) {
+                            String key = iter.next();
+                            ArrayList<String> cData = new ArrayList<String>();
+                            try {
+                                JSONArray conatcsItem=contactsObj.getJSONArray(key);
+                                for(int i=0;i<conatcsItem.length();i++){
+                                    if(conatcsItem.get(i).toString().equals("")){
+                                        continue;
+                                    }
+
+                                    cData.add(conatcsItem.get(i).toString());
+
+                                }
+                                Config.myUser.contatcs.put(key,cData);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
                         }
 
                         loadProjects();
@@ -453,6 +477,7 @@ public class SplashScreenActivity extends ActionBarActivity {
                             cv.put("avatar_url", avatarURLObject.get("url").toString() + "f_" + avatarURLObject.get("file").toString());
                             Config.db.insert("user", null, cv);
                         }
+                        c.close();
                     }
                 }
 

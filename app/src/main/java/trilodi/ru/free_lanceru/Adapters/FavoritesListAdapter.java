@@ -11,7 +11,6 @@ import android.graphics.Shader;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
-import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,7 +22,7 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 
 import trilodi.ru.free_lanceru.Components.AvatarDrawable;
-import trilodi.ru.free_lanceru.Models.Responses;
+import trilodi.ru.free_lanceru.Models.FavoriteUser;
 import trilodi.ru.free_lanceru.R;
 import trilodi.ru.free_lanceru.UI.ProfileActivity;
 import trilodi.ru.free_lanceru.UI.ProfileFragment;
@@ -31,35 +30,35 @@ import trilodi.ru.free_lanceru.UI.ProfileFragment;
 /**
  * Created by REstoreService on 24.05.15.
  */
-public class ResponsesListAdapter extends RecyclerView.Adapter<ResponsesListAdapter.ViewHolder> {
-    ArrayList<Responses> responses;
+public class FavoritesListAdapter extends RecyclerView.Adapter<FavoritesListAdapter.ViewHolder> {
+    ArrayList<FavoriteUser> responses;
 
     Picasso mPicasso;
     private com.squareup.picasso.Target loadtarget;
-    ResponsesListAdapter.ViewHolder h;
+    FavoritesListAdapter.ViewHolder h;
 
-    public ResponsesListAdapter(ArrayList<Responses> responses){
+    public FavoritesListAdapter(ArrayList<FavoriteUser> responses){
         this.responses = responses;
     }
 
     @Override
-    public ResponsesListAdapter.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-        View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.responses_list_ellement, viewGroup, false);
+    public FavoritesListAdapter.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
+        View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.favorites_list_ellement, viewGroup, false);
 
         ViewHolder vh = new ViewHolder(v);
         return vh;
     }
 
     @Override
-    public void onBindViewHolder(ResponsesListAdapter.ViewHolder holder, int i) {
+    public void onBindViewHolder(FavoritesListAdapter.ViewHolder holder, int i) {
         h = holder;
 
-        Responses response = this.responses.get(i);
+        FavoriteUser response = this.responses.get(i);
 
         mPicasso = Picasso.with(holder.avatarImage.getContext());
 
         AvatarDrawable avatarDrawable = null;
-        avatarDrawable = new AvatarDrawable(response.user);
+        avatarDrawable = new AvatarDrawable(response);
         holder.avatarImage.setImageDrawable(avatarDrawable);
 
         if (loadtarget == null) {
@@ -68,7 +67,6 @@ public class ResponsesListAdapter extends RecyclerView.Adapter<ResponsesListAdap
                 public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
                     // do something with the Bitmap
                     h.avatarImage.setImageBitmap(roundImage(bitmap));
-                    h.avatarImage.requestLayout();
                 }
 
                 @Override
@@ -83,42 +81,48 @@ public class ResponsesListAdapter extends RecyclerView.Adapter<ResponsesListAdap
             };
         }
 
-        if(!response.user.avatar.get("file").equals("")){
-            mPicasso.load(response.user.avatar.get("url")+"f_"+response.user.avatar.get("file")).into(loadtarget);
+        if(!response.avatar.get("file").equals("")){
+            mPicasso.load(response.avatar.get("url")+"f_"+response.avatar.get("file")).into(loadtarget);
         }
 
         String username = "";
 
-        username = response.user.firstname;
-        if(!response.user.lastname.equals("")){
+        username = response.firstname;
+        if(!response.lastname.equals("")){
             //userName.setText(project.user.firstname+" "+project.user.lastname);
-            username = response.user.firstname+" "+response.user.lastname;
+            username = response.firstname+" "+response.lastname;
         }
-        if(!response.user.username.equals("")){
+        if(!response.username.equals("")){
             //userName.setText(project.user.firstname+" "+project.user.lastname+" ("+project.user.username+")");
-            username = response.user.firstname+" "+response.user.lastname+" ("+response.user.username+")";
+            username = response.firstname+" "+response.lastname+" ("+response.username+")";
         }
 
         holder.userName.setText(username.trim());
-        if(response.user.online==1){
+        if(response.online==1){
             holder.onlineStatus.setText("На сайте");
         }else{
             holder.onlineStatus.setText("Нет на сайте");
         }
 
-        if(response.user.pro==1){
+        if(response.pro==1){
             holder.is_pro.setVisibility(View.VISIBLE);
         }else{
             holder.is_pro.setVisibility(View.GONE);
         }
 
-        if(response.user.verified==1){
+        if(response.verified==1){
             holder.is_ver.setVisibility(View.VISIBLE);
         }else{
             holder.is_ver.setVisibility(View.GONE);
         }
 
-        holder.comment.setText(Html.fromHtml(response.comment).toString());
+        if(response.role == 2){
+            holder.comment.setText("Работодатель");
+        }
+        if(response.role == 1){
+            holder.comment.setText("Фрилансер");
+        }
+
 
     }
 
@@ -149,14 +153,13 @@ public class ResponsesListAdapter extends RecyclerView.Adapter<ResponsesListAdap
                 @Override
                 public void onClick(View v) {
 
-                    ProfileFragment.userId = responses.get(getPosition()).user.id;
+                    ProfileFragment.userId = responses.get(getPosition()).id;
 
                     Intent userProfile = new Intent(v.getContext(), ProfileActivity.class);
                     userProfile.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     v.getContext().startActivity(userProfile);
                 }
             });
-
 
         }
 

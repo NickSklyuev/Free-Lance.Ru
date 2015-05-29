@@ -13,6 +13,7 @@ import android.text.TextPaint;
 import java.util.Locale;
 
 import trilodi.ru.free_lanceru.Config;
+import trilodi.ru.free_lanceru.Models.FavoriteUser;
 import trilodi.ru.free_lanceru.Models.User;
 import trilodi.ru.free_lanceru.R;
 
@@ -61,11 +62,24 @@ public class AvatarDrawable extends Drawable {
         this(user, false);
     }
 
+    public AvatarDrawable(FavoriteUser user) {
+        this(user, false);
+    }
+
     public AvatarDrawable(User user, boolean profile) {
         this();
         isProfile = profile;
         if (user != null) {
             this.user = user;
+            setInfo(user.id, user.firstname, user.lastname, user.username, false);
+        }
+    }
+
+    public AvatarDrawable(FavoriteUser user, boolean profile) {
+        this();
+        isProfile = profile;
+        if (user != null) {
+            this.user = (User) user;
             setInfo(user.id, user.firstname, user.lastname, user.username, false);
         }
     }

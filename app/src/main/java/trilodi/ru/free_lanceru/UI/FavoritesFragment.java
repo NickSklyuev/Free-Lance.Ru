@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
@@ -13,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.appodeal.ads.Appodeal;
 import com.gc.materialdesign.views.ProgressBarCircularIndeterminate;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
@@ -23,7 +25,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-import trilodi.ru.free_lanceru.Adapters.ProjectsListAdapter;
+import trilodi.ru.free_lanceru.Adapters.FavoritesListAdapter;
 import trilodi.ru.free_lanceru.Models.FavoriteUser;
 import trilodi.ru.free_lanceru.Network.NetManager;
 import trilodi.ru.free_lanceru.R;
@@ -44,7 +46,7 @@ public class FavoritesFragment extends Fragment {
     private OnFragmentInteractionListener mListener;
 
     private RecyclerView favoritesRecyclerView;
-    private ProjectsListAdapter mAdapter;
+    private FavoritesListAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
 
     private SwipeRefreshLayout refreshLayout;
@@ -124,6 +126,11 @@ public class FavoritesFragment extends Fragment {
                         favorites.add(new FavoriteUser(localJSONArray.getJSONObject(i)));
                     }
 
+                    mAdapter = new FavoritesListAdapter(favorites);
+                    favoritesRecyclerView.setItemAnimator(new DefaultItemAnimator());
+                    favoritesRecyclerView.setAdapter(mAdapter);
+                    refreshLayout.setRefreshing(false);
+
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -173,6 +180,14 @@ public class FavoritesFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         public void onFragmentInteraction(Uri uri);
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        Appodeal.hide(getActivity(), Appodeal.BANNER_VIEW);
+        Appodeal.setBannerViewId(R.id.appodealBannerView);
+        Appodeal.show(getActivity(), Appodeal.BANNER_VIEW);
     }
 
 }
