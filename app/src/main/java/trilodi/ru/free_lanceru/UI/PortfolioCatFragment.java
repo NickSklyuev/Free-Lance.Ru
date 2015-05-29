@@ -16,7 +16,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
-import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ImageView;
 
@@ -97,7 +96,7 @@ public class PortfolioCatFragment extends Fragment {
         }
 
         portfolioGridView.setAdapter(new PortfolioAdapter(getActivity(), this.portfolioArray));
-        portfolioGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        /*portfolioGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Portfolio portfolio = portfolioArray.get(position);
@@ -110,7 +109,7 @@ public class PortfolioCatFragment extends Fragment {
 
 
             }
-        });
+        });*/
         //portfolioGridView.setColumnWidth(130);
         return v;
     }
