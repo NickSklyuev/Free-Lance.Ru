@@ -85,8 +85,12 @@ public class MessageListAdapter extends RecyclerView.Adapter<MessageListAdapter.
                 public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
                     // do something with the Bitmap
 
-                    h.avatar.setImageBitmap(roundImage(bitmap));
-                    h.avatar.requestLayout();
+                    try{
+                        h.avatar.setImageBitmap(roundImage(bitmap));
+                        h.avatar.requestLayout();
+                    }catch(Exception e){
+                        e.printStackTrace();
+                    }
                 }
 
                 @Override

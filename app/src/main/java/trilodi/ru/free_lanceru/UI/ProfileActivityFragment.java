@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Map;
 
 import trilodi.ru.free_lanceru.Components.AvatarDrawable;
+import trilodi.ru.free_lanceru.Components.DBOpenHelper;
 import trilodi.ru.free_lanceru.Config;
 import trilodi.ru.free_lanceru.R;
 
@@ -48,7 +49,8 @@ public class ProfileActivityFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        Config.dbHelper=new DBOpenHelper(getActivity());
+        Config.db = Config.dbHelper.getWritableDatabase();
     }
 
     public static ProfileActivityFragment newInstance() {
@@ -124,7 +126,11 @@ public class ProfileActivityFragment extends Fragment {
                 @Override
                 public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
                     // do something with the Bitmap
-                    avatarImage.setImageBitmap(roundImage(bitmap));
+                    try{
+                        avatarImage.setImageBitmap(roundImage(bitmap));
+                    }catch(Exception e){
+                        e.printStackTrace();
+                    }
                 }
 
                 @Override

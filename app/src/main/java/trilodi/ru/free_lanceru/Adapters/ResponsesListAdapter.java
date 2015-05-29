@@ -67,8 +67,12 @@ public class ResponsesListAdapter extends RecyclerView.Adapter<ResponsesListAdap
                 @Override
                 public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
                     // do something with the Bitmap
-                    h.avatarImage.setImageBitmap(roundImage(bitmap));
-                    h.avatarImage.requestLayout();
+                    try{
+                        h.avatarImage.setImageBitmap(roundImage(bitmap));
+                        h.avatarImage.requestLayout();
+                    }catch(Exception e){
+                        e.printStackTrace();
+                    }
                 }
 
                 @Override

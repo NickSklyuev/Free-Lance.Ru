@@ -31,6 +31,8 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import trilodi.ru.free_lanceru.Adapters.ProjectsListAdapter;
+import trilodi.ru.free_lanceru.Components.DBOpenHelper;
+import trilodi.ru.free_lanceru.Config;
 import trilodi.ru.free_lanceru.Models.Project;
 import trilodi.ru.free_lanceru.Network.NetManager;
 import trilodi.ru.free_lanceru.R;
@@ -81,7 +83,8 @@ public class ProjectsListFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        Config.dbHelper=new DBOpenHelper(getActivity());
+        Config.db = Config.dbHelper.getWritableDatabase();
     }
 
     private void hideViews() {

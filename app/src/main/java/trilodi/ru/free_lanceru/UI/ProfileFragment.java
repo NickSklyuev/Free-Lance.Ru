@@ -39,9 +39,9 @@ import java.util.Iterator;
 import java.util.Map;
 
 import trilodi.ru.free_lanceru.Components.AvatarDrawable;
+import trilodi.ru.free_lanceru.Components.DBOpenHelper;
 import trilodi.ru.free_lanceru.Config;
 import trilodi.ru.free_lanceru.Models.User;
-import trilodi.ru.free_lanceru.Models.UserReview;
 import trilodi.ru.free_lanceru.Network.NetManager;
 import trilodi.ru.free_lanceru.R;
 
@@ -96,7 +96,8 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        Config.dbHelper=new DBOpenHelper(getActivity());
+        Config.db = Config.dbHelper.getWritableDatabase();
     }
 
     @Override
@@ -235,7 +236,11 @@ public class ProfileFragment extends Fragment {
                 @Override
                 public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
                     // do something with the Bitmap
-                    avatarImage.setImageBitmap(roundImage(bitmap));
+                    try{
+                        avatarImage.setImageBitmap(roundImage(bitmap));
+                    }catch(Exception e){
+                        e.printStackTrace();
+                    }
                 }
 
                 @Override
@@ -324,10 +329,10 @@ public class ProfileFragment extends Fragment {
                         //Config.myUser = new User(resp.getJSONObject("data").getJSONObject("user"));
                         user = new User(resp.getJSONObject("data").getJSONObject("user"));
 
-                        for(int i=0; i<resp.getJSONObject("data").getJSONObject("user").getJSONArray("reviews").length();i++){
+                        /*for(int i=0; i<resp.getJSONObject("data").getJSONObject("user").getJSONArray("reviews").length();i++){
                             JSONObject review = resp.getJSONObject("data").getJSONObject("user").getJSONArray("reviews").getJSONObject(i);
                             user.reviews.add(new UserReview(review));
-                        }
+                        }*/
 
                         JSONObject contactsObj=resp.getJSONObject("data").getJSONObject("user").getJSONObject("contacts");
                         String contactsData="";

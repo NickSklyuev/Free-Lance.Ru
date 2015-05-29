@@ -34,6 +34,7 @@ import java.util.Map;
 
 import trilodi.ru.free_lanceru.Adapters.ChatsListAdapter;
 import trilodi.ru.free_lanceru.Components.BusProvider;
+import trilodi.ru.free_lanceru.Components.DBOpenHelper;
 import trilodi.ru.free_lanceru.Config;
 import trilodi.ru.free_lanceru.Models.Chats;
 import trilodi.ru.free_lanceru.Models.Messages;
@@ -63,9 +64,7 @@ public class MessagesFragmant extends Fragment {
 
     private SwipeRefreshLayout refreshLayout;
 
-    Map<String, Chats> chatList = new HashMap<String, Chats>();
     ArrayList<Chats> chatArray = new ArrayList<Chats>();
-    ArrayList<String> chatIDS = new ArrayList<String>();
 
     String upTime="0";
 
@@ -74,9 +73,7 @@ public class MessagesFragmant extends Fragment {
     public void onUpdateResponses(ArrayList<Boolean> event){
         try{
             if (event.get(0)==true){
-                chatList.clear();
-                chatArray.clear();
-                chatIDS.clear();
+                //chatArray.clear();
                 new showChats().execute("");
             }
         }catch (Exception e){
@@ -105,7 +102,8 @@ public class MessagesFragmant extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        Config.dbHelper=new DBOpenHelper(getActivity());
+        Config.db = Config.dbHelper.getWritableDatabase();
     }
 
     @Override
@@ -185,6 +183,9 @@ public class MessagesFragmant extends Fragment {
 
         @Override
         protected String doInBackground(String...paramArrayOfString) {
+            Map<String, Chats> chatList = new HashMap<String, Chats>();
+            ArrayList<String> chatIDS = new ArrayList<String>();
+            chatArray = new ArrayList<Chats>();
             Cursor c =Config.db.query("message", null, null, null, null, null, "create_time DESC LIMIT 500");
             if (c.moveToFirst()) {
                 int uID = c.getColumnIndex("from_id");
@@ -268,9 +269,7 @@ public class MessagesFragmant extends Fragment {
 
     public void loadMEssages(){
 
-        chatList.clear();
-        chatArray.clear();
-        chatIDS.clear();
+        chatArray = new ArrayList<Chats>();
         progerssIndicator.setVisibility(View.VISIBLE);
 
         Cursor c = null;

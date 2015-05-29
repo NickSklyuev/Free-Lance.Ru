@@ -29,6 +29,7 @@ import java.util.Map;
 
 import trilodi.ru.free_lanceru.Adapters.MessageListAdapter;
 import trilodi.ru.free_lanceru.Components.BusProvider;
+import trilodi.ru.free_lanceru.Components.DBOpenHelper;
 import trilodi.ru.free_lanceru.Config;
 import trilodi.ru.free_lanceru.Models.Messages;
 import trilodi.ru.free_lanceru.Models.User;
@@ -64,6 +65,9 @@ public class MessageActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_message);
 
+
+        Config.dbHelper=new DBOpenHelper(this);
+        Config.db = Config.dbHelper.getWritableDatabase();
 
 
         progressIndicator = (ProgressBarCircularIndeterminate) findViewById(R.id.dialogProgress);
@@ -215,13 +219,26 @@ public class MessageActivity extends ActionBarActivity {
                 message.update_time = c.getString(update_time);
                 message.from_id = c.getString(from_id);
                 message.to_id = c.getString(to_id);
-                message.read = c.getString(read);
+                message.read = "1";
                 message.text = c.getString(text);
                 message.status = c.getString(status);
                 messages.add(message);
+                ContentValues cv = new ContentValues();
+                cv.put("create_time", c.getString(create_time));
+                cv.put("update_time", c.getString(update_time));
+                cv.put("from_id", c.getString(from_id));
+                cv.put("to_id", c.getString(to_id));
+                cv.put("read", "1");
+                cv.put("text", c.getString(text));
+                cv.put("status", c.getString(status));
+                Config.db.update("message", cv, "id=?",new String[]{c.getString(id)});
             }while(c.moveToNext());
         }
         c.close();
+        ArrayList<Boolean> b = new ArrayList<Boolean>();
+        b.add(true);
+
+        BusProvider.getInstance().post(b);
         progressIndicator.setVisibility(View.GONE);
         refreshLayout.setRefreshing(false);
         if(messages.size()==0){

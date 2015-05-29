@@ -61,5 +61,6 @@
     <string name="title_activity_add_response">AddResponse</string>
     <string name="title_activity_message">MessageActivity</string>
     <string name="title_activity_profile">ProfileActivity</string>
+    <string name="title_activity_portfolio">PortfolioActivity</string>
 
 </resources>

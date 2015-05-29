@@ -163,7 +163,11 @@ public class NavigationDrawerFragment extends Fragment {
                 @Override
                 public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
                     // do something with the Bitmap
-                    avatar.setImageBitmap(roundImage(bitmap));
+                    try{
+                        avatar.setImageBitmap(roundImage(bitmap));
+                    }catch(Exception e){
+                        e.printStackTrace();
+                    }
                 }
 
                 @Override

@@ -27,6 +27,8 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import trilodi.ru.free_lanceru.Adapters.FavoritesListAdapter;
+import trilodi.ru.free_lanceru.Components.DBOpenHelper;
+import trilodi.ru.free_lanceru.Config;
 import trilodi.ru.free_lanceru.Models.FavoriteUser;
 import trilodi.ru.free_lanceru.Network.NetManager;
 import trilodi.ru.free_lanceru.R;
@@ -77,6 +79,8 @@ public class FavoritesFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Config.dbHelper=new DBOpenHelper(getActivity());
+        Config.db = Config.dbHelper.getWritableDatabase();
     }
 
     @Override

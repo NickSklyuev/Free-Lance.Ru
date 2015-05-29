@@ -19,7 +19,9 @@ import java.util.ArrayList;
 import trilodi.ru.free_lanceru.Adapters.HidingScrollListener;
 import trilodi.ru.free_lanceru.Adapters.ResponsesListAdapter;
 import trilodi.ru.free_lanceru.Components.BusProvider;
+import trilodi.ru.free_lanceru.Components.DBOpenHelper;
 import trilodi.ru.free_lanceru.Components.UpdateResponsesEvent;
+import trilodi.ru.free_lanceru.Config;
 import trilodi.ru.free_lanceru.Models.Responses;
 import trilodi.ru.free_lanceru.R;
 
@@ -52,6 +54,9 @@ public class ResponsesActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_responses);
+
+        Config.dbHelper=new DBOpenHelper(this);
+        Config.db = Config.dbHelper.getWritableDatabase();
 
         tb = (Toolbar) findViewById(R.id.login_toolbar);
 

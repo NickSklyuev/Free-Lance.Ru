@@ -76,8 +76,12 @@ public class ChatsListAdapter extends RecyclerView.Adapter<ChatsListAdapter.View
                 public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
                     // do something with the Bitmap
 
-                    h.avatar.setImageBitmap(roundImage(bitmap));
-                    h.avatar.refreshDrawableState();
+                    try{
+                        h.avatar.setImageBitmap(roundImage(bitmap));
+                        h.avatar.refreshDrawableState();
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
                 }
 
                 @Override

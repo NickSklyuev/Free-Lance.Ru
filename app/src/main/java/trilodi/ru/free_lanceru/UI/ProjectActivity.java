@@ -38,6 +38,7 @@ import java.text.SimpleDateFormat;
 import trilodi.ru.free_lanceru.Adapters.FilesAdapter;
 import trilodi.ru.free_lanceru.Components.AvatarDrawable;
 import trilodi.ru.free_lanceru.Components.BusProvider;
+import trilodi.ru.free_lanceru.Components.DBOpenHelper;
 import trilodi.ru.free_lanceru.Components.UpdateProjectEvent;
 import trilodi.ru.free_lanceru.Components.UpdateResponsesEvent;
 import trilodi.ru.free_lanceru.Config;
@@ -73,6 +74,9 @@ public class ProjectActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_project);
+
+        Config.dbHelper=new DBOpenHelper(this);
+        Config.db = Config.dbHelper.getWritableDatabase();
 
         BusProvider.getInstance().register(this);
 
@@ -140,7 +144,11 @@ public class ProjectActivity extends ActionBarActivity {
                 @Override
                 public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
                     // do something with the Bitmap
-                    avatar.setImageBitmap(roundImage(bitmap));
+                    try{
+                        avatar.setImageBitmap(roundImage(bitmap));
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
                 }
 
                 @Override

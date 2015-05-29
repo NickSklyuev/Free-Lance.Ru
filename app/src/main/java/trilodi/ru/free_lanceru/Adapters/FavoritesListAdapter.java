@@ -66,7 +66,11 @@ public class FavoritesListAdapter extends RecyclerView.Adapter<FavoritesListAdap
                 @Override
                 public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
                     // do something with the Bitmap
-                    h.avatarImage.setImageBitmap(roundImage(bitmap));
+                    try{
+                        h.avatarImage.setImageBitmap(roundImage(bitmap));
+                    }catch(Exception e){
+                        e.printStackTrace();
+                    }
                 }
 
                 @Override
