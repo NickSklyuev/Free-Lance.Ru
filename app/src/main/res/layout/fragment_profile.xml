@@ -1,4 +1,4 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent" tools:context="trilodi.ru.free_lanceru.UI.ProfileFragment">
 
@@ -43,7 +43,8 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="56dp">
+        android:layout_marginTop="56dp"
+        android:layout_above="@+id/sendButton">
 
         <ScrollView
             android:layout_width="match_parent"
@@ -245,4 +246,13 @@
 
     </LinearLayout>
 
-</FrameLayout>
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Портфолио"
+        android:id="@+id/sendButton"
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/custom_button"
+        android:layout_alignParentBottom="true" />
+
+</RelativeLayout>

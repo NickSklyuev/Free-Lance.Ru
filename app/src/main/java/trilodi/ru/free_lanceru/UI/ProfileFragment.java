@@ -18,6 +18,7 @@ import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -75,6 +76,8 @@ public class ProfileFragment extends Fragment {
 
     ButtonFloat buttonFloat;
 
+    Button portfolioButton;
+
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
@@ -104,6 +107,18 @@ public class ProfileFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_profile_alls, container, false);
+
+        portfolioButton = (Button) v.findViewById(R.id.sendButton);
+
+        portfolioButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PortfolioActivityFragment.user_id = user.id;
+                Intent portfolio = new Intent(getActivity(), PortfolioActivity.class);
+                portfolio.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                getActivity().startActivity(portfolio);
+            }
+        });
 
         backButton = (ImageView) v.findViewById(R.id.backButton);
 
@@ -253,6 +268,10 @@ public class ProfileFragment extends Fragment {
 
                 }
             };
+        }
+
+        if(user.role==1){
+            portfolioButton.setVisibility(View.VISIBLE);
         }
 
         if(!user.avatar.get("file").equals("")){

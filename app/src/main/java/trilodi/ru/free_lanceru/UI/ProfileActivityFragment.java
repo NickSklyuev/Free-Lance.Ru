@@ -1,5 +1,6 @@
 package trilodi.ru.free_lanceru.UI;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -15,6 +16,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -43,6 +45,8 @@ public class ProfileActivityFragment extends Fragment {
     Picasso mPicasso;
     private com.squareup.picasso.Target loadtarget;
 
+    Button portfolioButton;
+
     public ProfileActivityFragment() {
     }
 
@@ -64,6 +68,20 @@ public class ProfileActivityFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_profile, container, false);
+
+        portfolioButton = (Button) v.findViewById(R.id.sendButton);
+
+        portfolioButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                PortfolioActivityFragment.user_id = Config.myUser.id;
+
+                Intent portfolio = new Intent(getActivity(), PortfolioActivity.class);
+                portfolio.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                getActivity().startActivity(portfolio);
+            }
+        });
 
         MenuButton = (ImageView) v.findViewById(R.id.MenuButton);
         MenuButton.setOnClickListener(new View.OnClickListener() {

@@ -44,7 +44,8 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="56dp">
+        android:layout_marginTop="56dp"
+        android:layout_above="@+id/sendButton">
 
         <ScrollView
             android:layout_width="match_parent"
@@ -249,16 +250,26 @@
 
 
     </LinearLayout>
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Портфолио"
+        android:id="@+id/sendButton"
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/custom_button"
+        android:layout_alignParentBottom="true"
+        android:visibility="invisible" />
 
     <com.gc.materialdesign.views.ButtonFloat
         android:id="@+id/buttonFloat"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true"
+        android:layout_alignParentBottom="false"
         android:layout_marginRight="24dp"
         android:background="@color/primary"
         materialdesign:animate="true"
-        materialdesign:iconDrawable="@drawable/ic_action_edit" />
+        materialdesign:iconDrawable="@drawable/ic_action_edit"
+        android:layout_above="@+id/sendButton" />
 
 </RelativeLayout>
