@@ -190,6 +190,16 @@ public class ProfileFragment extends Fragment {
         reviewText = (TextView) v.findViewById(R.id.textView6);
         roleText = (TextView) v.findViewById(R.id.textView16);
 
+        reviewText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ReviewShowFragment.allReviews = user.reviews;
+                Intent rev = new Intent(getActivity(), ProfileReviewActivity.class);
+                rev.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(rev);
+            }
+        });
+
         createdText = (TextView) v.findViewById(R.id.textView20);
         countryText = (TextView) v.findViewById(R.id.textView19);
 

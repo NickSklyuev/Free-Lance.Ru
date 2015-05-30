@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.appodeal.ads.Appodeal;
 import com.gc.materialdesign.views.ProgressBarCircularIndeterminate;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
@@ -133,7 +134,7 @@ public class PortfolioActivityFragment extends Fragment {
 
                         }
 
-                    }else{
+                    } else {
                         Intent splash = new Intent(getActivity(), SplashScreenActivity.class);
                         splash.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(splash);
@@ -190,5 +191,13 @@ public class PortfolioActivityFragment extends Fragment {
         if(categories.size()==0){
             messageDialog.show();
         }
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        Appodeal.hide(getActivity(), Appodeal.BANNER_VIEW);
+        //Appodeal.setBannerViewId(R.id.appodealBannerView);
+        //Appodeal.show(this, Appodeal.BANNER_VIEW);
     }
 }

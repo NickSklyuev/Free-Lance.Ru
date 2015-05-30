@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.appodeal.ads.Appodeal;
+
 import trilodi.ru.free_lanceru.R;
 
 public class PortfolioActivity extends ActionBarActivity {
@@ -36,5 +38,13 @@ public class PortfolioActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        Appodeal.hide(this, Appodeal.BANNER_VIEW);
+        //Appodeal.setBannerViewId(R.id.appodealBannerView);
+        //Appodeal.show(this, Appodeal.BANNER_VIEW);
     }
 }

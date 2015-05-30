@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Free-Lance.Ru</string>
+    <string name="app_name">FL.Ru</string>
     <string name="auth_lable">Авторизация</string>
     <string name="action_settings">Settings</string>
     <string name="loginEditText">Логин</string>
@@ -37,10 +37,10 @@
 
 
 
-    <string name="title_activity_main">MainActivity</string>
+    <string name="title_activity_main">FL.Ru</string>
 
     <string name="hello_world">Hello world!</string>
-    <string name="title_activity_projects_list">ProjectsListActivity</string>
+    <string name="title_activity_projects_list">FL.Ru</string>
 
 
 
@@ -55,12 +55,14 @@
 
 <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="title_activity_splash_screen">SplashScreenActivity</string>
-    <string name="title_activity_project">ProjectActivity</string>
-    <string name="title_activity_responses">ResponsesActivity</string>
-    <string name="title_activity_add_response">AddResponse</string>
-    <string name="title_activity_message">MessageActivity</string>
-    <string name="title_activity_profile">ProfileActivity</string>
-    <string name="title_activity_portfolio">PortfolioActivity</string>
+    <string name="title_activity_splash_screen">FL.Ru</string>
+    <string name="title_activity_project">FL.Ru</string>
+    <string name="title_activity_responses">FL.Ru</string>
+    <string name="title_activity_add_response">FL.Ru</string>
+    <string name="title_activity_message">FL.Ru</string>
+    <string name="title_activity_profile">FL.Ru</string>
+    <string name="title_activity_portfolio">FL.Ru</string>
+    <string name="title_activity_profile_review">FL.Ru</string>
+    <string name="title_activity_filter">FL.Ru</string>
 
 </resources>

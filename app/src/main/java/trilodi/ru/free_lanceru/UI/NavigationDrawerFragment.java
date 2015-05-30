@@ -1,6 +1,7 @@
 package trilodi.ru.free_lanceru.UI;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
@@ -79,7 +80,7 @@ public class NavigationDrawerFragment extends Fragment {
 
     Picasso mPicasso;
     ImageView avatar, proImage, verImage;
-    TextView userNames, userEmail, reviewsCount;
+    TextView userNames, userEmail, reviewsCount, filterText, exitText;
 
     private com.squareup.picasso.Target loadtarget;
 
@@ -124,6 +125,18 @@ public class NavigationDrawerFragment extends Fragment {
         userEmail = (TextView) mainDrawerLayout.findViewById(R.id.userEmail);
         reviewsCount = (TextView) mainDrawerLayout.findViewById(R.id.reviewsCount);
         TextView ratingText = (TextView) mainDrawerLayout.findViewById(R.id.ratingText);
+
+        filterText = (TextView) mainDrawerLayout.findViewById(R.id.textView22);
+        exitText = (TextView) mainDrawerLayout.findViewById(R.id.textView23);
+
+        filterText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent filter = new Intent(getActivity(), FilterActivity.class);
+                filter.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(filter);
+            }
+        });
 
         try{
             ratingText.setText("Рейтинг: "+Config.myUser.rating);

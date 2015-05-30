@@ -19,6 +19,7 @@ import android.view.animation.DecelerateInterpolator;
 import android.widget.GridView;
 import android.widget.ImageView;
 
+import com.appodeal.ads.Appodeal;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -315,6 +316,14 @@ public class PortfolioCatFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         public void onFragmentInteraction(Uri uri);
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        Appodeal.hide(getActivity(), Appodeal.BANNER_VIEW);
+        //Appodeal.setBannerViewId(R.id.appodealBannerView);
+        //Appodeal.show(this, Appodeal.BANNER_VIEW);
     }
 
 }
