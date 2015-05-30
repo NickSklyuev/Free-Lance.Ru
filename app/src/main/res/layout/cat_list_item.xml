@@ -9,7 +9,7 @@
         android:layout_height="wrap_content"
         android:text="New Text"
         android:textSize="18dp"
-        android:textColor="#ff8ba2ff"
+        android:textColor="#333333"
         android:textStyle="bold"
         android:id="@+id/textView26" />
 </LinearLayout>

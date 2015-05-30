@@ -1,10 +1,11 @@
 package trilodi.ru.free_lanceru.UI;
 
-import android.app.Dialog;
+import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -13,22 +14,32 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.TextView;
 
 import com.appodeal.ads.Appodeal;
+import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
+import com.squareup.otto.Subscribe;
+
+import org.apache.http.Header;
 
 import java.util.ArrayList;
 
 import trilodi.ru.free_lanceru.Adapters.CatGroupAdapter;
 import trilodi.ru.free_lanceru.Adapters.CategoriesAdapter;
 import trilodi.ru.free_lanceru.Adapters.FilterListAdapter;
+import trilodi.ru.free_lanceru.Components.BusProvider;
 import trilodi.ru.free_lanceru.Components.DBOpenHelper;
+import trilodi.ru.free_lanceru.Components.UpdateFilterEvent;
+import trilodi.ru.free_lanceru.Components.UpdateProjectEvent;
 import trilodi.ru.free_lanceru.Config;
 import trilodi.ru.free_lanceru.Models.CatGroup;
 import trilodi.ru.free_lanceru.Models.Categories;
+import trilodi.ru.free_lanceru.Network.NetManager;
 import trilodi.ru.free_lanceru.R;
 
 public class FilterActivity extends ActionBarActivity {
@@ -43,7 +54,7 @@ public class FilterActivity extends ActionBarActivity {
 
     String filterID="0";
 
-    TextView mText;
+    //TextView mText;
     ListView categoriesList;
 
     private RecyclerView filterRecyclerView;
@@ -52,15 +63,44 @@ public class FilterActivity extends ActionBarActivity {
 
     ArrayList catGIDs=new ArrayList();
     ArrayList catIDs=new ArrayList();
-    ArrayList<Categories> categoriesMainList = new ArrayList<Categories>();
+    public static ArrayList<Categories> categoriesMainList = new ArrayList<Categories>();
     ArrayList<CatGroup> catGroups = new ArrayList<CatGroup>();
 
     ArrayList<Categories> categories = new ArrayList<Categories>();
+
+    ImageView okButton, backButton;
+
+    Button add;
+
+    int pos=0;
+
+    @Subscribe
+    public void onUpdateProject(UpdateFilterEvent event){
+        System.out.println(event.cid);
+        categoriesMainList.remove((int)event.cid);
+        mAdapter = new FilterListAdapter(categoriesMainList);
+        filterRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        filterRecyclerView.setAdapter(mAdapter);
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_filter);
+
+        BusProvider.getInstance().register(this);
+
+        okButton = (ImageView) findViewById(R.id.OK);
+        backButton = (ImageView) findViewById(R.id.backButton);
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
+        add=(Button)findViewById(R.id.sendButton);
 
         catGIDs=new ArrayList();
         catIDs=new ArrayList();
@@ -85,12 +125,12 @@ public class FilterActivity extends ActionBarActivity {
             if(c.getString(enabler).equals("1")){
                 filter_enabler.setChecked(true);
                 user_filter.setVisibility(View.GONE);
-                //add_cat.setVisibility(View.GONE);
+                add.setVisibility(View.GONE);
                 filter_enable=true;
             }else{
                 filter_enabler.setChecked(false);
                 user_filter.setVisibility(View.VISIBLE);
-                //add_cat.setVisibility(View.VISIBLE);
+                add.setVisibility(View.VISIBLE);
                 filter_enable=false;
             }
 
@@ -140,12 +180,12 @@ public class FilterActivity extends ActionBarActivity {
                 if(isChecked){
                     filter_enabler.setChecked(true);
                     user_filter.setVisibility(View.GONE);
-                    //add_cat.setVisibility(View.GONE);
+                    add.setVisibility(View.GONE);
                     filter_enable=true;
                 }else{
                     filter_enabler.setChecked(false);
                     user_filter.setVisibility(View.VISIBLE);
-                    //add_cat.setVisibility(View.VISIBLE);
+                    add.setVisibility(View.VISIBLE);
                     filter_enable=false;
                 }
 
@@ -166,33 +206,39 @@ public class FilterActivity extends ActionBarActivity {
         c.close();
 
 
-        final Dialog catGroupDialog = new Dialog(this);
-        catGroupDialog.setContentView(R.layout.dialog_cat_groups_layout);
-        catGroupDialog.setTitle("Группы категорий");
-        catGroupDialog.setCancelable(true);
+        View cgdView = getLayoutInflater().inflate(R.layout.dialog_cat_groups_layout, null);
+        final AlertDialog catGroupDialog = new AlertDialog.Builder(this).setView(cgdView).setCancelable(true).create();
+        TextView cgdTitle = (TextView) cgdView.findViewById(R.id.dialogtitle);
+        cgdTitle.setText("Группы категорий");
+        //final Dialog catGroupDialog = new Dialog(this);
+        //catGroupDialog.setContentView(R.layout.dialog_cat_groups_layout);
+        //catGroupDialog.setTitle("Группы категорий");
+        //catGroupDialog.setCancelable(true);
 
         CatGroupAdapter cga=new CatGroupAdapter(catGroupDialog.getContext(),catGroups);
-        ListView catGroupList = (ListView)catGroupDialog.findViewById(R.id.listView7);
+        ListView catGroupList = (ListView)cgdView.findViewById(R.id.listView7);
         catGroupList.setAdapter(cga);
 
 
-        final Dialog categoriesDialog = new Dialog(this);
-        categoriesDialog.setContentView(R.layout.dialog_cat_groups_layout);
-        categoriesDialog.setTitle("Категории");
-        categoriesDialog.setCancelable(true);
-
-        final Dialog deleteCategory = new Dialog(this);
-        deleteCategory.setContentView(R.layout.dialog_message);
-        deleteCategory.setTitle("Удаление категории");
-        deleteCategory.setCancelable(true);
-
-        mText=(TextView)deleteCategory.findViewById(R.id.textView27);
 
 
-        categoriesList = (ListView)categoriesDialog.findViewById(R.id.listView7);
+        View cdView = getLayoutInflater().inflate(R.layout.dialog_cat_groups_layout, null);
 
 
-        Button add=(Button)findViewById(R.id.sendButton);
+        final AlertDialog categoriesDialog = new AlertDialog.Builder(this).setView(cdView).setCancelable(true).create();
+
+
+        TextView cdTitle = (TextView) cdView.findViewById(R.id.dialogtitle);
+        cdTitle.setText("Категории");
+
+
+
+
+
+        categoriesList = (ListView)cdView.findViewById(R.id.listView7);
+
+
+
         add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -210,21 +256,21 @@ public class FilterActivity extends ActionBarActivity {
 
         catGroupList.setOnItemClickListener(new ListView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view,int position, long id) {
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 categories = new ArrayList<Categories>();
                 catGroupDialog.dismiss();
-                Cursor c = Config.db.query("category", null, "category_group_id="+catGroups.get(position).getCatId(), null, null, null, "title ASC");
+                Cursor c = Config.db.query("category", null, "category_group_id=" + catGroups.get(position).getCatId(), null, null, null, "title ASC");
                 if (c.moveToFirst()) {
                     int catId = c.getColumnIndex("id");
                     int catTitle = c.getColumnIndex("title");
-                    do{
+                    do {
                         System.out.println(c.getString(catTitle));
-                        categories.add(new Categories(c.getString(catId),c.getString(catTitle)));
-                    }while (c.moveToNext());
+                        categories.add(new Categories(c.getString(catId), c.getString(catTitle)));
+                    } while (c.moveToNext());
                 }
                 c.close();
 
-                CategoriesAdapter ca=new CategoriesAdapter(categoriesDialog.getContext(),categories);
+                CategoriesAdapter ca = new CategoriesAdapter(categoriesDialog.getContext(), categories);
                 categoriesList.setAdapter(ca);
 
                 categoriesDialog.show();
@@ -235,11 +281,11 @@ public class FilterActivity extends ActionBarActivity {
 
         categoriesList.setOnItemClickListener(new ListView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view,int position, long id) {
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                 System.out.println(categories.get(position).getCatTitle());
 
-                categoriesMainList.add(new Categories(categories.get(position).getCatId(),categories.get(position).getCatTitle()));
+                categoriesMainList.add(new Categories(categories.get(position).getCatId(), categories.get(position).getCatTitle()));
                 //FilterListAdapter ca=new FilterListAdapter(FilterActivity.this,categoriesMainList);
                 //mainList.setAdapter(ca);
                 mAdapter = new FilterListAdapter(categoriesMainList);
@@ -249,6 +295,105 @@ public class FilterActivity extends ActionBarActivity {
                 categoriesDialog.dismiss();
             }
         });
+
+
+        okButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Config.db.delete("filter", null, null);
+                Config.db.delete("filter_item", null, null);
+
+                ContentValues cv = new ContentValues();
+                cv.put("id", "1");
+                if (filter_enable) {
+                    cv.put("enabled", "1");
+                } else {
+                    cv.put("enabled", "0");
+                }
+                cv.put("keyword", keywords.getText().toString());
+                Config.db.insert("filter", null, cv);
+
+                catGIDs.clear();
+                catIDs.clear();
+                for (int i = 0; i < categoriesMainList.size(); i++) {
+                    Cursor c = Config.db.query("category", null, "id=?", new String[]{categoriesMainList.get(i).getCatId()}, null, null, null);
+                    if (c.moveToFirst()) {
+                        int id = c.getColumnIndex("category_group_id");
+                        catGIDs.add(c.getString(id));
+                        catIDs.add(categoriesMainList.get(i).getCatId());
+                        cv = new ContentValues();
+                        cv.put("filter_id", "1");
+                        cv.put("category_group_id", c.getString(id));
+                        cv.put("category_id", categoriesMainList.get(i).getCatId());
+                        Config.db.insert("filter_item", null, cv);
+                    }
+                    c.close();
+                }
+
+                //ProjectsFragment.onRefresh=true;
+
+                RequestParams localRequestParams = new RequestParams();
+                localRequestParams.put("method", "settings_filter_set");
+
+                if (filter_enable) {
+                    localRequestParams.put("enabled", "1");
+                } else {
+                    localRequestParams.put("enabled", "0");
+                }
+                localRequestParams.put("keyword", keywords.getText().toString());
+                for (int i = 0; i < catGIDs.size(); i++) {
+                    String str1 = String.format("items[%s][categories_group_id]", String.valueOf(i));
+                    String str2 = String.format("items[%s][categories_id]", String.valueOf(i));
+
+                    localRequestParams.put(str1, catGIDs.get(i).toString());
+                    localRequestParams.put(str2, catIDs.get(i).toString());
+                }
+                NetManager.getInstance(FilterActivity.this).post(localRequestParams, new AsyncHttpResponseHandler() {
+                    @Override
+                    public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+
+                        try {
+                            String str = new String(responseBody, "UTF-8");
+                            System.out.println(str);
+
+                            BusProvider.getInstance().post(new UpdateProjectEvent());
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    @Override
+                    public void onFinish() {
+                        try {/*progDailog.dismiss();*/} catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        super.onFinish();
+                    }
+
+                    @Override
+                    public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                        //new MessagesDialog(FilterActivity.this,"Фильтр", "Ошибка сохранения настроек фильтра.\nПроверьте соединение и повторите попытку.").show();
+                    }
+                });
+
+            }
+        });
+
+
+
+       /* mAdapter.SetOnItemClickListener(new FilterListAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                pos = position;
+
+                mText.setText("Вы действительно хотите удалить категорию \"" + categoriesMainList.get(pos).getCatTitle() + "\"?");
+                deleteCategory.show();
+            }
+        });
+
+        */
+
 
         /*mainList.setOnItemClickListener(new ListView.OnItemClickListener() {
             @Override
@@ -260,28 +405,10 @@ public class FilterActivity extends ActionBarActivity {
 
 
             }
-        });
-
-
-        Button ok=(Button)deleteCategory.findViewById(R.id.okay);
-        Button cancel=(Button)deleteCategory.findViewById(R.id.cancel);
-
-        ok.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                categoriesMainList.remove(pos);
-                FilterListAdapter ca=new FilterListAdapter(FilterActivity.this,categoriesMainList);
-                mainList.setAdapter(ca);
-                deleteCategory.dismiss();
-            }
-        });
-
-        cancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                deleteCategory.dismiss();
-            }
         });*/
+
+
+
 
     }
 

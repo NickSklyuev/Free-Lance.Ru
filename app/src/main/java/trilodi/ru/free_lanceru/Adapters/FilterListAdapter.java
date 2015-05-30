@@ -7,23 +7,30 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.graphics.Shader;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import trilodi.ru.free_lanceru.Components.BusProvider;
+import trilodi.ru.free_lanceru.Components.UpdateFilterEvent;
 import trilodi.ru.free_lanceru.Models.Categories;
 import trilodi.ru.free_lanceru.R;
+import trilodi.ru.free_lanceru.UI.FilterActivity;
 
 /**
  * Created by REstoreService on 24.05.15.
  */
 public class FilterListAdapter extends RecyclerView.Adapter<FilterListAdapter.ViewHolder> {
     private ArrayList<Categories> itemsArrayList = new ArrayList<Categories>();
+
+    OnItemClickListener mItemClickListener;
 
 
     public FilterListAdapter(ArrayList<Categories> itemsArrayList){
@@ -49,13 +56,55 @@ public class FilterListAdapter extends RecyclerView.Adapter<FilterListAdapter.Vi
         return this.itemsArrayList.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         // each data item is just a string in this case
         ImageView deleter;
         TextView title;
+        TextView mText;
         public ViewHolder(View v) {
             super(v);
             title = (TextView) v.findViewById(R.id.textView21);
+            deleter = (ImageView) v.findViewById(R.id.imageView9);
+
+            v.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    View dcView = v.inflate(v.getContext(),R.layout.dialog_message, null);
+                    final AlertDialog deleteCategory = new AlertDialog.Builder(v.getContext()).setView(dcView).setCancelable(true).create();
+                    mText=(TextView)dcView.findViewById(R.id.textView27);
+
+                    mText.setText("Вы действительно хотите удалить категорию \"" + FilterActivity.categoriesMainList.get(getPosition()).getCatTitle() + "\"?");
+                    deleteCategory.show();
+
+                    Button ok=(Button)dcView.findViewById(R.id.okay);
+                    Button cancel=(Button)dcView.findViewById(R.id.cancel);
+
+                    ok.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            int cids = getPosition();
+
+                            BusProvider.getInstance().post(new UpdateFilterEvent(cids));
+                            deleteCategory.dismiss();
+                        }
+                    });
+
+                    cancel.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            deleteCategory.dismiss();
+                        }
+                    });
+                }
+            });
+        }
+
+        @Override
+        public void onClick(View v) {
+            if (mItemClickListener != null) {
+                mItemClickListener.onItemClick(v, getPosition()); //OnItemClickListener mItemClickListener;
+            }
+
         }
 
 
@@ -76,6 +125,14 @@ public class FilterListAdapter extends RecyclerView.Adapter<FilterListAdapter.Vi
         canvas.drawRoundRect((new RectF(0.0f, 0.0f, bitmap.getWidth(), bitmap.getHeight())), 80, 80, paint);
 
         return bitmapRounded;
+    }
+
+    public interface OnItemClickListener {
+        public void onItemClick(View view , int position);
+    }
+
+    public void SetOnItemClickListener(OnItemClickListener mItemClickListener){
+        this.mItemClickListener = mItemClickListener;
     }
 
 }

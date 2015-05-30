@@ -37,6 +37,13 @@
                 android:layout_weight="1"
                 android:layout_marginLeft="20dp" />
 
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/OK"
+                android:background="@drawable/ic_check"
+                android:layout_weight="0" />
+
         </LinearLayout>
 
     </android.support.v7.widget.Toolbar>

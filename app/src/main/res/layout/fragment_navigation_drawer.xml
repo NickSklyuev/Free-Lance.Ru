@@ -140,6 +140,8 @@
                     android:text="Фильтр проектов"
                     android:id="@+id/textView22"
                     android:layout_marginBottom="10dp"
+                    android:drawableLeft="@drawable/ic_filter"
+                    android:drawablePadding="20dp"
                     android:textColor="#333333" />
 
                 <TextView
@@ -147,6 +149,8 @@
                     android:layout_height="wrap_content"
                     android:text="Выход"
                     android:id="@+id/textView23"
+                    android:drawableLeft="@drawable/ic_logout"
+                    android:drawablePadding="20dp"
                     android:textColor="#333333" />
             </LinearLayout>
         </LinearLayout>

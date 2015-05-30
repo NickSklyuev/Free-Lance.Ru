@@ -142,6 +142,10 @@
             android:name=".UI.FilterActivity"
             android:label="@string/title_activity_filter" >
         </activity>
+        <activity
+            android:name=".UI.RegistrationActivity"
+            android:label="@string/title_activity_registration" >
+        </activity>
     </application>
 
 </manifest>

@@ -20,6 +20,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -34,10 +35,16 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.gc.materialdesign.views.ProgressBarCircularIndeterminate;
+import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
 import com.squareup.picasso.Picasso;
+
+import org.apache.http.Header;
 
 import trilodi.ru.free_lanceru.Components.AvatarDrawable;
 import trilodi.ru.free_lanceru.Config;
+import trilodi.ru.free_lanceru.Network.NetManager;
 import trilodi.ru.free_lanceru.R;
 
 /**
@@ -87,6 +94,9 @@ public class NavigationDrawerFragment extends Fragment {
     public NavigationDrawerFragment() {
     }
 
+    AlertDialog dialog;
+    View loadingView;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -128,6 +138,79 @@ public class NavigationDrawerFragment extends Fragment {
 
         filterText = (TextView) mainDrawerLayout.findViewById(R.id.textView22);
         exitText = (TextView) mainDrawerLayout.findViewById(R.id.textView23);
+
+        exitText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                loadingView = getActivity().getLayoutInflater().inflate(R.layout.load_dialog_layout, null);
+                ProgressBarCircularIndeterminate progresser = (ProgressBarCircularIndeterminate) loadingView.findViewById(R.id.dialogProgress);
+
+                TextView dialogTitle = (TextView) loadingView.findViewById(R.id.dialogtitle);
+                TextView dialogDescription = (TextView) loadingView.findViewById(R.id.dialogDescription);
+
+                dialogTitle.setText("Пожалуйста подождите...");
+                dialogDescription.setText("Идет выход из приложения!");
+
+                dialog = new AlertDialog.Builder(getActivity()).setView(loadingView).setCancelable(false).create();
+                dialog.show();
+                String delete = "DELETE FROM message";
+                Config.db.rawQuery(delete, null);
+                delete = "DELETE FROM user";
+                Config.db.rawQuery(delete, null);
+                delete = "DELETE FROM category";
+                Config.db.rawQuery(delete, null);
+                delete = "DELETE FROM category_group";
+                Config.db.rawQuery(delete, null);
+                delete = "DELETE FROM city";
+                Config.db.rawQuery(delete, null);
+                delete = "DELETE FROM country";
+                Config.db.rawQuery(delete, null);
+                delete = "DELETE FROM filter";
+                Config.db.rawQuery(delete, null);
+                delete = "DELETE FROM filter_item";
+                Config.db.rawQuery(delete, null);
+
+                SharedPreferences.Editor localEditor2 = PreferenceManager.getDefaultSharedPreferences(getActivity()).edit();
+                localEditor2.putString("login", "");
+                localEditor2.putString("password", "");
+                localEditor2.putLong("login_time", 0);
+                localEditor2.putString("id", "");
+                localEditor2.putBoolean("first_launch_not_login", true);
+                localEditor2.commit();
+
+                RequestParams localRequestParams = new RequestParams();
+                localRequestParams.put("method", "users_signout");
+                NetManager.getInstance(getActivity()).post(localRequestParams, new AsyncHttpResponseHandler() {
+                    @Override
+                    public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                        try {
+                            String str = new String(responseBody, "UTF-8");
+                            System.out.println(str);
+                            Intent splash = new Intent(getActivity(),SplashScreenActivity.class);
+                            splash.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(splash);
+                            getActivity().finish();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
+
+                    }
+
+                    @Override
+                    public void onFinish() {
+                        dialog.dismiss();
+                        super.onFinish();
+                    }
+
+                    @Override
+                    public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                        // new MessagesDialog(ProjectActivity.this, "Проект", "Во время загрузки проекта произошла ошибка соединения.\nПроверьте соединение и повторите попытку.").show();
+                    }
+                });
+            }
+        });
 
         filterText.setOnClickListener(new View.OnClickListener() {
             @Override

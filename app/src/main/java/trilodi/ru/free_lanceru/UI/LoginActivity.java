@@ -12,6 +12,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -44,6 +45,8 @@ public class LoginActivity extends ActionBarActivity {
 
     SharedPreferences localEditor;
 
+    Button regButton;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,6 +55,16 @@ public class LoginActivity extends ActionBarActivity {
                 Context.INPUT_METHOD_SERVICE);
 
         localEditor = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+
+        regButton = (Button) findViewById(R.id.sendButton);
+        regButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent regView = new Intent(LoginActivity.this, RegistrationActivity.class);
+                regView.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(regView);
+            }
+        });
 
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.login_toolbar);

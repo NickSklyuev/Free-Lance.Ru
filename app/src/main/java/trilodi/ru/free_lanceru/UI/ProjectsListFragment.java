@@ -23,6 +23,7 @@ import com.appodeal.ads.Appodeal;
 import com.gc.materialdesign.views.ProgressBarCircularIndeterminate;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
+import com.squareup.otto.Subscribe;
 
 import org.apache.http.Header;
 import org.json.JSONArray;
@@ -31,7 +32,9 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import trilodi.ru.free_lanceru.Adapters.ProjectsListAdapter;
+import trilodi.ru.free_lanceru.Components.BusProvider;
 import trilodi.ru.free_lanceru.Components.DBOpenHelper;
+import trilodi.ru.free_lanceru.Components.UpdateProjectEvent;
 import trilodi.ru.free_lanceru.Config;
 import trilodi.ru.free_lanceru.Models.Project;
 import trilodi.ru.free_lanceru.Network.NetManager;
@@ -62,6 +65,11 @@ public class ProjectsListFragment extends Fragment {
 
     ProgressBarCircularIndeterminate loadProgressing;
 
+    @Subscribe
+    public void onUpdateProject(UpdateProjectEvent event){
+        loadData();
+    }
+
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
@@ -85,6 +93,7 @@ public class ProjectsListFragment extends Fragment {
         super.onCreate(savedInstanceState);
         Config.dbHelper=new DBOpenHelper(getActivity());
         Config.db = Config.dbHelper.getWritableDatabase();
+        BusProvider.getInstance().register(this);
     }
 
     private void hideViews() {

@@ -64,5 +64,6 @@
     <string name="title_activity_portfolio">FL.Ru</string>
     <string name="title_activity_profile_review">FL.Ru</string>
     <string name="title_activity_filter">FL.Ru</string>
+    <string name="title_activity_registration">RegistrationActivity</string>
 
 </resources>

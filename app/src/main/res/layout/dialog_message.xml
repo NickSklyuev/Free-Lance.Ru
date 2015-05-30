@@ -13,7 +13,7 @@
             android:layout_height="wrap_content"
             android:text="New Text"
             android:textSize="16dp"
-            android:textColor="#ff099cff"
+            android:textColor="#333333"
             android:id="@+id/textView27"
             android:layout_margin="10dp" />
 
@@ -30,7 +30,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                android:background="@drawable/dialog_button"
+                android:background="@drawable/custom_button"
                 android:text="ДА"
                 android:layout_weight="1"
                 android:layout_marginRight="5dp" />
@@ -39,7 +39,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                android:background="@drawable/dialog_button"
+                android:background="@drawable/custom_button"
                 android:text="НЕТ"
                 android:layout_weight="1"
                 android:layout_marginLeft="5dp" />
