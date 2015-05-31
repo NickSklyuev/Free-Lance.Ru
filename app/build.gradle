@@ -5,7 +5,7 @@ android {
     buildToolsVersion "22.0.1"
 
     defaultConfig {
-        applicationId "trilodi.ru.free_lanceru"
+        applicationId "trilodi.ru.free_lance"
         minSdkVersion 14
         targetSdkVersion 22
         versionCode 1
@@ -38,6 +38,8 @@ dependencies {
 
     compile 'com.ogaclejapan.smarttablayout:library:1.1.3@aar'
     compile 'com.ogaclejapan.smarttablayout:utils-v4:1.1.3@aar'
+
+    compile files('libs/AppRate.jar')
 
     //compile project(':plusone')
 

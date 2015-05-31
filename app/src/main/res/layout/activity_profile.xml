@@ -1,5 +1,5 @@
 <fragment xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:id="@+id/fragment"
-    android:name="trilodi.ru.free_lanceru.UI.ProfileFragment"
+    android:name="trilodi.ru.free_lance.UI.ProfileFragment"
     tools:layout="@layout/fragment_profile2" android:layout_width="match_parent"
     android:layout_height="match_parent" />

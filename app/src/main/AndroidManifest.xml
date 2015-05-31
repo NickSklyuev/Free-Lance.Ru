@@ -11,17 +11,28 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+
+    <permission
+        android:name="trilodi.ru.free_lanceru.permission.C2D_MESSAGE"
+        android:protectionLevel="signature" />
+
+    <uses-permission android:name="trilodi.ru.free_lanceru.permission.C2D_MESSAGE" />
+
     <application
+        android:name="trilodi.ru.free_lance.FreeLanceApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".UI.LoginActivity"
+            android:name="trilodi.ru.free_lance.UI.LoginActivity"
             android:label="@string/app_name" >
         </activity>
         <activity
-            android:name=".UI.MainActivity"
+            android:name="trilodi.ru.free_lance.UI.MainActivity"
             android:label="@string/title_activity_main" >
             <intent-filter>
                 <data
@@ -35,7 +46,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".UI.SplashScreenActivity"
+            android:name="trilodi.ru.free_lance.UI.SplashScreenActivity"
             android:label="@string/title_activity_splash_screen" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -44,20 +55,20 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".UI.ProjectActivity"
+            android:name="trilodi.ru.free_lance.UI.ProjectActivity"
             android:label="@string/title_activity_project" >
         </activity>
         <activity
-            android:name=".UI.ResponsesActivity"
+            android:name="trilodi.ru.free_lance.UI.ResponsesActivity"
             android:label="@string/title_activity_responses" >
         </activity>
         <activity
-            android:name=".UI.AddResponse"
+            android:name="trilodi.ru.free_lance.UI.AddResponse"
             android:label="@string/title_activity_add_response" >
         </activity>
         <!-- <activity android:name="ru.wapstart.plus1.sdk.ApplicationBrowser" /> -->
         <activity
-            android:name=".UI.MessageActivity"
+            android:name="trilodi.ru.free_lance.UI.MessageActivity"
             android:label="@string/title_activity_message" >
         </activity>
         <activity
@@ -76,6 +87,26 @@
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
+
+        <receiver android:name="com.google.android.gms.analytics.AnalyticsReceiver"
+            android:enabled="true">
+            <intent-filter>
+                <action android:name="com.google.android.gms.analytics.ANALYTICS_DISPATCH" />
+            </intent-filter>
+        </receiver>
+        <service android:name="com.google.android.gms.analytics.AnalyticsService"
+            android:enabled="true"
+            android:exported="false"/>
+
+        <!-- Optionally, register CampaignTrackingReceiver and CampaignTrackingService to enable
+             installation campaign reporting -->
+        <receiver android:name="com.google.android.gms.analytics.CampaignTrackingReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.android.vending.INSTALL_REFERRER" />
+            </intent-filter>
+        </receiver>
+        <service android:name="com.google.android.gms.analytics.CampaignTrackingService" />
 
         <activity
             android:name="com.google.android.gms.ads.AdActivity"
@@ -127,25 +158,52 @@
             android:hardwareAccelerated="true"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
         <activity
-            android:name=".UI.ProfileActivity"
+            android:name="trilodi.ru.free_lance.UI.ProfileActivity"
             android:label="@string/title_activity_profile" >
         </activity>
         <activity
-            android:name=".UI.PortfolioActivity"
+            android:name="trilodi.ru.free_lance.UI.PortfolioActivity"
             android:label="@string/title_activity_portfolio" >
         </activity>
         <activity
-            android:name=".UI.ProfileReviewActivity"
+            android:name="trilodi.ru.free_lance.UI.ProfileReviewActivity"
             android:label="@string/title_activity_profile_review" >
         </activity>
         <activity
-            android:name=".UI.FilterActivity"
+            android:name="trilodi.ru.free_lance.UI.FilterActivity"
             android:label="@string/title_activity_filter" >
         </activity>
         <activity
-            android:name=".UI.RegistrationActivity"
+            android:name="trilodi.ru.free_lance.UI.RegistrationActivity"
             android:label="@string/title_activity_registration" >
         </activity>
+
+        <service
+            android:name="trilodi.ru.free_lance.Services.MainService"
+            android:enabled="true"
+            android:exported="true" >
+        </service>
+
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+
+        <service
+            android:name="trilodi.ru.free_lance.Services.GcmIntentService"
+            android:enabled="true"
+            android:exported="true" >
+        </service>
+
+        <receiver
+            android:name="trilodi.ru.free_lance.Broadcast.GcmBroadcastReceiver"
+            android:enabled="true"
+            android:permission="com.google.android.c2dm.permission.SEND" >
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+
+                <category android:name="trilodi.ru.free_lanceru" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

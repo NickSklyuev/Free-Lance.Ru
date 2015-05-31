@@ -5,7 +5,7 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
-    tools:context="trilodi.ru.free_lanceru.UI.PortfolioActivityFragment">
+    tools:context="trilodi.ru.free_lance.UI.PortfolioActivityFragment">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/login_toolbar"

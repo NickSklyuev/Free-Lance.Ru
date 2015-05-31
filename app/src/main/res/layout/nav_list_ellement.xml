@@ -2,6 +2,8 @@
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/tv"
     android:textColor="#333333"
-    android:layout_width="fill_parent"
-    android:gravity="center"
-    android:layout_height="fill_parent"/>
+    android:layout_width="match_parent"
+    android:drawablePadding="20dp"
+    android:layout_height="fill_parent"
+    android:padding="10dp"
+    android:gravity="left" />

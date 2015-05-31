@@ -1,7 +1,7 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="trilodi.ru.free_lanceru.UI.ProjectsListFragment">
+    tools:context="trilodi.ru.free_lance.UI.ProjectsListFragment">
 
     <android.support.v4.widget.SwipeRefreshLayout
         android:layout_width="match_parent"
