@@ -77,18 +77,19 @@
                     android:layout_marginRight="5dp">
 
                     <ImageView
-                        android:layout_width="15dp"
-                        android:layout_height="15dp"
+                        android:layout_width="17dp"
+                        android:layout_height="17dp"
                         android:id="@+id/verImage"
-                        android:src="@drawable/verified_list"
+                        android:src="@drawable/checkbox_marked_circle"
                         android:layout_gravity="center_horizontal"
                         android:layout_marginBottom="5dp" />
 
                     <ImageView
-                        android:layout_width="25dp"
-                        android:layout_height="15dp"
+                        android:layout_width="17dp"
+                        android:layout_height="17dp"
                         android:id="@+id/proImage"
-                        android:src="@drawable/pro_list" />
+                        android:layout_gravity="center_horizontal"
+                        android:src="@drawable/pinterest_box" />
                 </LinearLayout>
             </LinearLayout>
 

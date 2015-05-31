@@ -55,16 +55,16 @@ public class NavifationListAdapter extends BaseAdapter {
 
         switch (position){
             case 0:
-                li.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_projects, 0, 0, 0);
+                li.setCompoundDrawablesWithIntrinsicBounds(R.drawable.clipboard_text, 0, 0, 0);
                 break;
             case 1:
-                li.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_message, 0, 0, 0);
+                li.setCompoundDrawablesWithIntrinsicBounds(R.drawable.message_text, 0, 0, 0);
                 break;
             case 2:
-                li.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_favorites, 0, 0, 0);
+                li.setCompoundDrawablesWithIntrinsicBounds(R.drawable.account_star_variant, 0, 0, 0);
                 break;
             case 3:
-                li.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_profile, 0, 0, 0);
+                li.setCompoundDrawablesWithIntrinsicBounds(R.drawable.account, 0, 0, 0);
                 break;
         }
 

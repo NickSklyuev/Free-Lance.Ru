@@ -78,18 +78,17 @@
                             android:layout_marginLeft="16dp">
 
                             <ImageView
-                                android:layout_width="40dp"
+                                android:layout_width="25dp"
                                 android:layout_height="25dp"
                                 android:id="@+id/proImage"
-                                android:src="@drawable/pro_list"
+                                android:src="@drawable/pinterest_box"
                                 android:layout_marginRight="10dp" />
 
                             <ImageView
-                                android:layout_width="20dp"
-                                android:layout_height="20dp"
+                                android:layout_width="25dp"
+                                android:layout_height="25dp"
                                 android:id="@+id/verImage"
-                                android:src="@drawable/verified_list"
-                                android:layout_marginTop="2dp" />
+                                android:src="@drawable/checkbox_marked_circle" />
                         </LinearLayout>
                     </LinearLayout>
                 </LinearLayout>
@@ -141,7 +140,6 @@
                     android:text="Фильтр проектов"
                     android:id="@+id/textView22"
                     android:layout_marginBottom="10dp"
-                    android:drawableLeft="@drawable/ic_filter"
                     android:drawablePadding="20dp"
                     android:textColor="#333333" />
 
@@ -150,7 +148,6 @@
                     android:layout_height="wrap_content"
                     android:text="Выход"
                     android:id="@+id/textView23"
-                    android:drawableLeft="@drawable/ic_logout"
                     android:drawablePadding="20dp"
                     android:textColor="#333333" />
             </LinearLayout>

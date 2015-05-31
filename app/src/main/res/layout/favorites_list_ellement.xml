@@ -62,20 +62,20 @@
                             android:text="нет на сайте" />
 
                         <ImageView
-                            android:layout_width="20dp"
-                            android:layout_height="13dp"
+                            android:layout_width="15dp"
+                            android:layout_height="15dp"
                             android:id="@+id/is_pro"
-                            android:src="@drawable/pro_list"
+                            android:src="@drawable/pinterest_box"
                             android:layout_marginTop="2dp"
                             android:layout_marginLeft="5dp" />
 
                         <ImageView
-                            android:layout_width="13dp"
-                            android:layout_height="13dp"
+                            android:layout_width="15dp"
+                            android:layout_height="15dp"
                             android:id="@+id/is_ver"
                             android:layout_marginLeft="5dp"
-                            android:layout_marginTop="1dp"
-                            android:src="@drawable/verified_list" />
+                            android:layout_marginTop="0dp"
+                            android:src="@drawable/checkbox_marked_circle" />
                     </LinearLayout>
 
                     <LinearLayout
