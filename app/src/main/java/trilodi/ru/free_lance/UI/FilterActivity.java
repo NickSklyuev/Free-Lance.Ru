@@ -21,6 +21,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import com.appodeal.ads.Appodeal;
+import com.gc.materialdesign.views.ProgressBarCircularIndeterminate;
 import com.google.android.gms.analytics.HitBuilders;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
@@ -76,6 +77,11 @@ public class FilterActivity extends ActionBarActivity {
 
     int pos=0;
 
+    AlertDialog dialog, messageDialog;
+    View loadingView, messageView;
+
+    TextView messageTitle, messageText;
+
     @Subscribe
     public void onUpdateProject(UpdateFilterEvent event){
         System.out.println(event.cid);
@@ -90,6 +96,23 @@ public class FilterActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_filter);
+
+
+        loadingView = getLayoutInflater().inflate(R.layout.load_dialog_layout, null);
+        messageView = getLayoutInflater().inflate(R.layout.message_dialog_layout, null);
+        ProgressBarCircularIndeterminate progresser = (ProgressBarCircularIndeterminate) loadingView.findViewById(R.id.dialogProgress);
+
+        TextView dialogTitle = (TextView) loadingView.findViewById(R.id.dialogtitle);
+        TextView dialogDescription = (TextView) loadingView.findViewById(R.id.dialogDescription);
+
+        dialogTitle.setText("Применение фильтра");
+        dialogDescription.setText("Пожалуйста подождите...\nИдет применение фильтра!");
+
+
+        messageTitle = (TextView) messageView.findViewById(R.id.dialogtitle);
+        messageText = (TextView) messageView.findViewById(R.id.dialogDescription);
+
+        dialog = new AlertDialog.Builder(this).setView(loadingView).setCancelable(false).create();
 
         FreeLanceApplication.tracker().send(new HitBuilders.EventBuilder("ui", "open").setLabel("Фильтр проектов").build());
 
@@ -336,6 +359,8 @@ public class FilterActivity extends ActionBarActivity {
 
                 //ProjectsFragment.onRefresh=true;
 
+                dialog.show();
+
                 RequestParams localRequestParams = new RequestParams();
                 localRequestParams.put("method", "settings_filter_set");
 
@@ -362,6 +387,11 @@ public class FilterActivity extends ActionBarActivity {
 
                             BusProvider.getInstance().post(new UpdateProjectEvent());
 
+                            messageTitle.setText("Фильтр обновлен");
+                            messageText.setText("Фильтр проектов обновлен и успешно применен!\nЕсли новые проекты не загрузились, то обновите список проектов!");
+                            messageDialog = new AlertDialog.Builder(FilterActivity.this).setView(messageView).setCancelable(true).create();
+                            messageDialog.show();
+
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -369,6 +399,7 @@ public class FilterActivity extends ActionBarActivity {
 
                     @Override
                     public void onFinish() {
+                        dialog.dismiss();
                         try {/*progDailog.dismiss();*/} catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -377,7 +408,10 @@ public class FilterActivity extends ActionBarActivity {
 
                     @Override
                     public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                        //new MessagesDialog(FilterActivity.this,"Фильтр", "Ошибка сохранения настроек фильтра.\nПроверьте соединение и повторите попытку.").show();
+                        messageTitle.setText("Ошибка!");
+                        messageText.setText("Ошибка подкючения к интернету!\nПроверьте подключение и повторите попытку позже!");
+                        messageDialog = new AlertDialog.Builder(FilterActivity.this).setView(messageView).setCancelable(true).create();
+                        messageDialog.show();
                     }
                 });
 

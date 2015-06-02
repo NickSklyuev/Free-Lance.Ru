@@ -92,10 +92,10 @@
                         android:textColor="#ff787878" />
 
                     <ImageView
-                        android:layout_width="15dp"
+                        android:layout_width="25dp"
                         android:layout_height="15dp"
                         android:id="@+id/imageView3"
-                        android:src="@drawable/pinterest_box"
+                        android:src="@drawable/pro_list"
                         android:layout_alignParentTop="false"
                         android:layout_toRightOf="@+id/textView3"
                         android:layout_marginTop="2dp"
@@ -125,7 +125,7 @@
                         android:layout_width="15dp"
                         android:layout_height="15dp"
                         android:id="@+id/imageView4"
-                        android:src="@drawable/checkbox_marked_circle"
+                        android:src="@drawable/verified_list"
                         android:layout_centerVertical="true"
                         android:layout_toRightOf="@+id/textView5"
                         android:layout_toEndOf="@+id/textView5"

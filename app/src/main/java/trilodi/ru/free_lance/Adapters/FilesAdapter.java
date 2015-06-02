@@ -35,8 +35,8 @@ public class FilesAdapter extends ArrayAdapter<String> {
 
         TextView fileName = (TextView) rowView.findViewById(R.id.fileName);
 
-        ImageView image = (ImageView) rowView.findViewById(R.id.imageView5);
-        image.setImageResource(R.drawable.dropbox);
+        //ImageView image = (ImageView) rowView.findViewById(R.id.imageView5);
+        //image.setImageResource(R.drawable.dropbox);
 
         String file = attaches.get(position);
 

@@ -115,16 +115,16 @@
 
                                 <ImageView
                                     android:layout_width="25dp"
-                                    android:layout_height="25dp"
+                                    android:layout_height="15dp"
                                     android:id="@+id/imageView6"
-                                    android:src="@drawable/pinterest_box"
+                                    android:src="@drawable/pro_list"
                                     android:layout_marginRight="10dp" />
 
                                 <ImageView
-                                    android:layout_width="25dp"
-                                    android:layout_height="25dp"
+                                    android:layout_width="15dp"
+                                    android:layout_height="15dp"
                                     android:id="@+id/imageView7"
-                                    android:src="@drawable/checkbox_marked_circle"
+                                    android:src="@drawable/verified_list"
                                     android:layout_marginTop="0dp" />
                             </LinearLayout>
                         </LinearLayout>

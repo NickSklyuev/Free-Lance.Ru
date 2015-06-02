@@ -34,6 +34,8 @@ public class FreeLanceApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
+        //LeakCanary.install(this);
+
 
         analytics = GoogleAnalytics.getInstance(this);
         tracker = analytics.newTracker("UA-58028032-1");

@@ -19,6 +19,7 @@ import android.text.Spanned;
 import android.text.style.AbsoluteSizeSpan;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -141,7 +142,11 @@ public class MessageListAdapter extends RecyclerView.Adapter<MessageListAdapter.
         Spannable wordtoSpan = new SpannableString(uName+cDate);
         wordtoSpan.setSpan(new ForegroundColorSpan(FreeLanceApplication.getContext().getResources().getColor(R.color.red_color)), uName.length(), (uName.length())+cDate.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         wordtoSpan.setSpan(new StyleSpan(Typeface.NORMAL), uName.length(), (uName.length())+cDate.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        wordtoSpan.setSpan(new AbsoluteSizeSpan(30), uName.length(), (uName.length())+cDate.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        DisplayMetrics displayMetrics = holder.user_name.getContext().getResources().getDisplayMetrics();
+        int px = Math.round(11 * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
+
+        wordtoSpan.setSpan(new AbsoluteSizeSpan(px), uName.length(), (uName.length())+cDate.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
         //holder.messages_count.setText(wordtoSpan);
         holder.user_name.setText(wordtoSpan);

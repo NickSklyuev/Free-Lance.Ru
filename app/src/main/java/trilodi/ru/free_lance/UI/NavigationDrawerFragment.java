@@ -139,8 +139,8 @@ public class NavigationDrawerFragment extends Fragment {
         filterText = (TextView) mainDrawerLayout.findViewById(R.id.textView22);
         exitText = (TextView) mainDrawerLayout.findViewById(R.id.textView23);
 
-        filterText.setCompoundDrawablesWithIntrinsicBounds(R.drawable.filter, 0, 0, 0);
-        exitText.setCompoundDrawablesWithIntrinsicBounds(R.drawable.logout, 0, 0, 0);
+        filterText.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_filter, 0, 0, 0);
+        exitText.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_logout, 0, 0, 0);
 
         exitText.setOnClickListener(new View.OnClickListener() {
             @Override
